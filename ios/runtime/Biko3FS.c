@@ -116,7 +116,15 @@ static void guest_stat(GuestStat *g, const struct stat *s) {
 }
 static int op_stat(void *r, const char *path, GuestStat *out) {
     char buf[PATH_MAX]; const char *p = mapped(path, buf); struct stat s;
-    if (!p || stat(p, &s)) return fail(r);
+    if (!p || stat(p, &s)) {
+        int saved = errno;
+        if (getenv("BIKO3_FS_TRACE"))
+            fprintf(stderr, "[biko3] newlib stat %s -> -1 errno=%d\n", path, saved);
+        errno = saved;
+        return fail(r);
+    }
+    if (getenv("BIKO3_FS_TRACE"))
+        fprintf(stderr, "[biko3] newlib stat %s -> 0 bytes=%lld\n", path, (long long)s.st_size);
     guest_stat(out, &s); return 0;
 }
 static int op_fstat(void *r, void *file, GuestStat *out) {

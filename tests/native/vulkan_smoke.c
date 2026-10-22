@@ -58,10 +58,15 @@ int main(void) {
         .pApplicationName = "Biko3 bridge compute smoke", .apiVersion = VK_API_VERSION_1_1};
     VkInstanceCreateInfo instance_info = {.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pApplicationInfo = &application};
-    REQUIRE(create_instance(&instance_info, NULL, &instance));
+    VkResult instance_result = create_instance(&instance_info, NULL, &instance);
+    if (instance_result == VK_ERROR_INCOMPATIBLE_DRIVER) {
+        fprintf(stderr, "SKIP: Vulkan driver does not support instance creation\n");
+        status = 77; goto cleanup;
+    }
+    REQUIRE(instance_result);
     uint32_t count = 0;
     REQUIRE(vkEnumeratePhysicalDevices(instance, &count, NULL));
-    if (!count) { fprintf(stderr, "No Vulkan physical device\n"); goto cleanup; }
+    if (!count) { fprintf(stderr, "SKIP: no Vulkan physical device\n"); status = 77; goto cleanup; }
     physical = calloc(count, sizeof(*physical));
     if (!physical) goto cleanup;
     REQUIRE(vkEnumeratePhysicalDevices(instance, &count, physical));
@@ -79,7 +84,7 @@ int main(void) {
         }
         free(families); families = NULL;
     }
-    if (!selected) { fprintf(stderr, "No graphics+compute queue\n"); goto cleanup; }
+    if (!selected) { fprintf(stderr, "SKIP: no graphics+compute queue\n"); status = 77; goto cleanup; }
     float priority = 1.0f;
     VkDeviceQueueCreateInfo queue_info = {.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
         .queueFamilyIndex = family, .queueCount = 1, .pQueuePriorities = &priority};

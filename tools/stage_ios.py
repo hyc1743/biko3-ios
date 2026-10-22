@@ -52,6 +52,7 @@ def binding_header(hooks, build_id):
 
 
 def frontend(text):
+    text = '#include "Biko3Libnx.h"\n' + text
     text = text.replace('@"romfs"', '@"game"').replace('@"save"', '@"saves"')
     text = replace_once(text, 'for (NSString *d in @[@"saves", @"temp"])',
                         'for (NSString *d in @[@"saves", @"temp", @"game", @"captures"])')
@@ -62,6 +63,30 @@ def frontend(text):
                         '    setenv("BIKO3_CAPTURE_ROOT", [doc stringByAppendingPathComponent:@"captures"].fileSystemRepresentation, 1);')
     text = replace_once(text, 'setvbuf(stderr, NULL, _IOLBF, 0);',
                         'setvbuf(stderr, NULL, _IOLBF, 0);\n    dup2(fileno(stderr), STDOUT_FILENO);')
+    error_ui = '''static void biko3_show_error(const char *message) {
+    @autoreleasepool {
+        NSString *text = message ? [NSString stringWithUTF8String:message] : @"Game startup failed.";
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIViewController *controller = nil;
+            for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
+                if (![scene isKindOfClass:UIWindowScene.class]) continue;
+                for (UIWindow *window in ((UIWindowScene *)scene).windows)
+                    if (window.isKeyWindow) controller = window.rootViewController;
+            }
+            while (controller.presentedViewController) controller = controller.presentedViewController;
+            if (!controller) return;
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Biko3 could not start"
+                message:[text stringByAppendingString:@"\\n\\nCheck Documents/game/Data and Documents/log.txt."]
+                preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+            [controller presentViewController:alert animated:YES completion:nil];
+        });
+    }
+}
+'''
+    text = replace_once(text, 'int main(int argc, char **argv) {', error_ui + '\nint main(int argc, char **argv) {')
+    text = replace_once(text, '@autoreleasepool { g_boot_ok = boot_env(); }',
+                        '@autoreleasepool { biko3_set_error_callback(biko3_show_error); g_boot_ok = boot_env(); }')
     return text
 
 

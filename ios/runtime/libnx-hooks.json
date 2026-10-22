@@ -96,6 +96,12 @@
       "slot": 1039,
       "symbol": "biko3_audio_released",
       "expected": "fd7bbea9fd030091f35301a9f40301aa"
+    },
+    {
+      "offset": "0xa5cc0",
+      "slot": 1040,
+      "symbol": "biko3_platform_error",
+      "expected": "fd7bbaa9fd030091f35301a9f40301aa"
     }
   ]
 }

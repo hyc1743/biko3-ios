@@ -2,7 +2,8 @@
 """GitHub cloud transport. Credentials stay in memory; publication is explicit.
 
 Use --credential-dir with an existing authenticated checkout when its local
-credential configuration is needed. No game inputs are eligible for publication.
+credential configuration is needed. Source publication permits only the pinned
+encrypted guest input. Development IPA releases require a matching build report.
 """
 from __future__ import annotations
 
@@ -20,6 +21,9 @@ import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
+import zipfile
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def git_executable():
@@ -55,6 +59,13 @@ class SafeRedirect(urllib.request.HTTPRedirectHandler):
         if redirected and urllib.parse.urlsplit(request.full_url).netloc != urllib.parse.urlsplit(newurl).netloc:
             redirected.remove_header("Authorization")
         return redirected
+
+
+class UploadRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, request, fp, code, msg, headers, newurl):
+        # Asset uploads are pinned to the documented GitHub upload host.
+        # Reject redirects entirely rather than risking forwarding a token/body.
+        raise ValueError("GitHub release upload redirected unexpectedly")
 
 
 def repository(value):
@@ -103,6 +114,41 @@ class GitHub:
         self.api("PUT", path + "/" + name,
                  {"encrypted_value": base64.b64encode(encrypted).decode(), "key_id": public["key_id"]})
 
+    def create_release(self, repo, tag, target_sha, body):
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", tag) or not re.fullmatch(r"[0-9a-fA-F]{40}", target_sha):
+            raise ValueError("Release requires a simple tag and exact 40-character commit SHA")
+        if not body.strip():
+            raise ValueError("Release requires reviewed Markdown text")
+        return self.api("POST", "/repos/" + repository(repo) + "/releases",
+                        {"tag_name": tag, "target_commitish": target_sha, "name": tag,
+                         "body": body, "draft": False, "prerelease": True, "make_latest": "false"})
+
+    def upload_release_asset(self, repo, release_id, path):
+        path = Path(path)
+        url = f"https://uploads.github.com/repos/{repository(repo)}/releases/{int(release_id)}/assets?"
+        url += urllib.parse.urlencode({"name": path.name})
+        headers = {"Authorization": "Bearer " + self.token, "User-Agent": "Biko3-cloud",
+                   "Accept": "application/vnd.github+json", "Content-Type": "application/octet-stream",
+                   "Content-Length": str(path.stat().st_size), "X-GitHub-Api-Version": "2022-11-28"}
+        opener = urllib.request.build_opener(UploadRedirect())
+        with path.open("rb") as source:
+            request = urllib.request.Request(url, data=source, method="POST", headers=headers)
+            with opener.open(request, timeout=180) as response:
+                result = json.load(response)
+        if result.get("name") != path.name or result.get("size") != path.stat().st_size or result.get("state") != "uploaded":
+            raise ValueError("GitHub release asset upload was incomplete")
+        return {key: result[key] for key in ("id", "name", "size", "browser_download_url")}
+
+    def upload_release_assets(self, repo, release_id, paths):
+        files = release_files(paths)
+        release = self.api("GET", f"/repos/{repository(repo)}/releases/{int(release_id)}")
+        if release.get("prerelease") is not True or release.get("draft") is not False:
+            raise ValueError("Development assets require a published prerelease")
+        existing = {item["name"] for item in release.get("assets", [])}
+        if existing.intersection(path.name for path in files):
+            raise ValueError("Release already contains an asset with a requested name")
+        return [self.upload_release_asset(repo, release_id, path) for path in files]
+
     def dispatch(self, repo, workflow, ref, inputs):
         path = "/repos/" + repository(repo) + "/actions/workflows/" + urllib.parse.quote(workflow, safe="")
         self.api("POST", path + "/dispatches", {"ref": ref, "inputs": inputs})
@@ -138,6 +184,57 @@ class GitHub:
 
 DENIED_PARTS = {".git", ".tools", "references", "switch", "work", "__pycache__"}
 DENIED_SUFFIXES = {".keys", ".nsp", ".nro", ".nso", ".elf", ".ipa", ".zip", ".7z", ".bin", ".spv", ".metallib", ".pyc"}
+
+
+def release_files(paths, *, release_root=None):
+    """Only reviewed development IPA/report assets from the release directory."""
+    root = (Path(release_root) if release_root is not None else ROOT / "artifacts/release").resolve()
+    files, names, reports, ipas = [], set(), [], []
+    for value in paths:
+        path = Path(value)
+        resolved = path.resolve()
+        if not resolved.is_relative_to(root) or not path.is_file() or any(p.is_symlink() for p in [path, *path.parents]):
+            raise ValueError("Release asset must be a regular file inside artifacts/release")
+        if path.suffix.lower() not in {".ipa", ".json", ".md"} or path.name in names:
+            raise ValueError("Release assets allow unique .ipa, .json and .md files only")
+        if path.suffix.lower() == ".json":
+            report = json.loads(path.read_text(encoding="utf-8"))
+            if (not isinstance(report, dict) or report.get("contains_guest_executable") is not True or
+                    report.get("signed") is not False or report.get("runtime_verified") is not False):
+                raise ValueError("Release report must identify an unsigned, unverified real guest IPA")
+            reports.append(report)
+        elif path.suffix.lower() == ".ipa":
+            if not zipfile.is_zipfile(path):
+                raise ValueError("Release IPA is not a ZIP application package")
+            with zipfile.ZipFile(path) as archive:
+                entries = archive.namelist()
+                if not {"Payload/Biko3.app/Biko3", "Payload/Biko3.app/Info.plist"}.issubset(entries):
+                    raise ValueError("Release IPA is missing the Biko3 application")
+                for name in entries:
+                    parts = PurePosixPath(name)
+                    if (parts.is_absolute() or ".." in parts.parts or "data" in {p.lower() for p in parts.parts} or
+                            parts.suffix.lower() in {".keys", ".nsp", ".nro", ".nso"}):
+                        raise ValueError("Release IPA contains original inputs or unsafe paths")
+            ipas.append(path)
+        else:
+            content = path.read_bytes()
+            if (len(content) > 5 * 1024 * 1024 or b"\0" in content or
+                    re.search(rb"(?m)^-----BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-----\r?$", content)):
+                raise ValueError("Release Markdown must be plain text without private keys")
+            try:
+                content.decode("utf-8")
+            except UnicodeDecodeError:
+                raise ValueError("Release Markdown must be UTF-8 text") from None
+        names.add(path.name)
+        files.append(resolved)
+    if not ipas or not reports:
+        raise ValueError("Release upload requires both an IPA and its build report")
+    for ipa in ipas:
+        with ipa.open("rb") as source:
+            digest = hashlib.file_digest(source, "sha256").hexdigest()
+        if not any(r.get("ipa_sha256") == digest and r.get("ipa_bytes") == ipa.stat().st_size for r in reports):
+            raise ValueError("Release IPA does not match a reviewed build report")
+    return files
 
 
 def publication_files(root, manifest):
@@ -228,6 +325,15 @@ def main(argv=None):
     create = commands.add_parser("create-public")
     create.add_argument("name")
     create.add_argument("--description", default="Biko3 iOS port source and cloud build")
+    release = commands.add_parser("release")
+    release.add_argument("repo")
+    release.add_argument("tag")
+    release.add_argument("--target-sha", required=True)
+    release.add_argument("--body-file", type=Path, required=True)
+    assets = commands.add_parser("upload-release-assets")
+    assets.add_argument("repo")
+    assets.add_argument("release_id", type=int)
+    assets.add_argument("files", nargs="+", type=Path)
     review = commands.add_parser("review")
     review.add_argument("--root", type=Path, default=Path.cwd())
     review.add_argument("--manifest", type=Path, required=True)
@@ -277,6 +383,11 @@ def main(argv=None):
         elif args.command == "create-public":
             response = github.create_public(args.name, args.description)
             result = {key: response[key] for key in ("full_name", "html_url", "private")}
+        elif args.command == "release":
+            response = github.create_release(args.repo, args.tag, args.target_sha, args.body_file.read_text(encoding="utf-8"))
+            result = {key: response[key] for key in ("id", "tag_name", "html_url", "prerelease", "target_commitish")}
+        elif args.command == "upload-release-assets":
+            result = github.upload_release_assets(args.repo, args.release_id, args.files)
         elif args.command == "publish":
             result = publish(github, args.repo, args.root, args.manifest, args.branch)
         elif args.command == "dispatch":

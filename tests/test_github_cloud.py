@@ -1,6 +1,7 @@
 import json
 import base64
 import hashlib
+import io
 import os
 from pathlib import Path
 import subprocess
@@ -9,9 +10,10 @@ import tempfile
 import unittest
 from unittest.mock import patch
 import urllib.request
+import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-from github_cloud import GitHub, SafeRedirect, credential, publication_files
+from github_cloud import GitHub, SafeRedirect, UploadRedirect, credential, publication_files, release_files
 
 
 class CloudTests(unittest.TestCase):
@@ -109,6 +111,69 @@ class CloudTests(unittest.TestCase):
         self.assertEqual(args[:2], ("PUT", "/repos/owner/biko3-ios/actions/secrets/BIKO3_GUEST_KEY"))
         self.assertNotIn("private-secret", str(args))
         self.assertEqual(SealedBox(private).decrypt(base64.b64decode(args[2]["encrypted_value"])), b"private-secret")
+
+    def test_release_requires_exact_commit_and_is_always_a_prerelease(self):
+        github = GitHub("test-token")
+        with patch.object(github, "api", return_value={}) as api:
+            github.create_release("owner/biko3-ios", "development-001", "a" * 40, "Import Data manually; device runtime unverified.")
+            method, endpoint, payload = api.call_args.args
+            self.assertEqual((method, endpoint), ("POST", "/repos/owner/biko3-ios/releases"))
+            self.assertTrue(payload["prerelease"])
+            self.assertFalse(payload["draft"])
+            self.assertEqual(payload["target_commitish"], "a" * 40)
+            with self.assertRaises(ValueError):
+                github.create_release("owner/biko3-ios", "development-001", "main", "Unverified")
+
+    def test_release_assets_require_report_hash_flags_and_allowed_location(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "artifacts/release"
+            root.mkdir(parents=True)
+            ipa = root / "Biko3-development.ipa"
+            with zipfile.ZipFile(ipa, "w") as archive:
+                archive.writestr("Payload/Biko3.app/Biko3", b"compiled executable fixture")
+                archive.writestr("Payload/Biko3.app/Info.plist", b"plist fixture")
+            report = root / "build-report.json"
+            fields = {"contains_guest_executable": True, "signed": False, "runtime_verified": False,
+                      "ipa_sha256": hashlib.sha256(ipa.read_bytes()).hexdigest(), "ipa_bytes": ipa.stat().st_size}
+            report.write_text(json.dumps(fields))
+            self.assertEqual(release_files([ipa, report], release_root=root), [ipa.resolve(), report.resolve()])
+            for changed in (dict(fields, signed=True), dict(fields, runtime_verified=True),
+                            dict(fields, contains_guest_executable=False), dict(fields, ipa_sha256="0" * 64)):
+                report.write_text(json.dumps(changed))
+                with self.assertRaises(ValueError):
+                    release_files([ipa, report], release_root=root)
+            report.write_text(json.dumps(fields))
+            outside = root.parent / "outside.md"
+            outside.write_text("not a release asset")
+            key = root / "prod.keys"
+            key.write_text("fixture")
+            for extra in (outside, key):
+                with self.assertRaises(ValueError):
+                    release_files([ipa, report, extra], release_root=root)
+            with zipfile.ZipFile(ipa, "a") as archive:
+                archive.writestr("Payload/Biko3.app/game.nro", b"original input")
+            with self.assertRaisesRegex(ValueError, "original inputs"):
+                release_files([ipa, report], release_root=root)
+
+    def test_release_upload_pins_host_and_refuses_redirects(self):
+        github = GitHub("test-token")
+        with tempfile.TemporaryDirectory() as tmp:
+            asset = Path(tmp) / "Biko3-development.ipa"
+            asset.write_bytes(b"fixture")
+            response = {"id": 17, "name": asset.name, "size": asset.stat().st_size, "state": "uploaded", "browser_download_url": "https://github.com/owner/repo/releases/download/tag/file.ipa"}
+            with patch("github_cloud.urllib.request.build_opener") as build:
+                build.return_value.open.return_value = io.BytesIO(json.dumps(response).encode())
+                result = github.upload_release_asset("owner/biko3-ios", 123, asset)
+                request = build.return_value.open.call_args.args[0]
+                parsed = urllib.parse.urlsplit(request.full_url)
+                self.assertEqual(parsed.netloc, "uploads.github.com")
+                self.assertEqual(parsed.scheme, "https")
+                self.assertNotIn("test-token", request.full_url)
+                self.assertEqual(request.get_header("Content-length"), str(asset.stat().st_size))
+                self.assertEqual(result["id"], 17)
+        request = urllib.request.Request("https://uploads.github.com/repos/o/r/releases/1/assets")
+        with self.assertRaisesRegex(ValueError, "redirected"):
+            UploadRedirect().redirect_request(request, None, 302, "Found", {}, "https://other.example/assets")
 
 
 if __name__ == "__main__":

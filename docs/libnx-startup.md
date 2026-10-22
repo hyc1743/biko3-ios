@@ -72,3 +72,17 @@ Current limits: static ABI/patch validation is not proof of boot. Apple compile
 and physical iOS launch remain necessary to verify graphics, sound and
 playability. Save operations are direct POSIX writes and have the game's own
 atomicity; this is not the reference SDK's transactional save emulation.
+
+`tools/mac_guest_smoke.py --staged OUT --moltenvk-root MVK --out OUT/logs/guest-macos`
+builds the staged macOS host and executes the same rewritten guest through its
+dynamic loader on a native arm64 Mac. It uses a fresh empty game/Data folder and
+requires real logs for completed libnx init, original main entry, the original
+newlib stat callback reporting missing patch.pp, original main return and normal
+host process exit. Other operating systems/architectures report skipped with
+verified=false. This check does not establish an iOS device boot or playability.
+
+The native platform error handler replaces the Horizon console/HID wait with a
+logged error and an optional frontend callback (`biko3_set_error_callback`). The
+game's original main then unwinds normally. The platform configuration's +32
+field is a save-storage root: its consumers append `/save`, `volume.cfg`,
+`unlocks.bku` and `records.bkr`; it now uses BIKO3_SAVE_ROOT.

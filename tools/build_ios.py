@@ -99,6 +99,71 @@ def pinned_source(source, work):
     return destination
 
 
+def native_vulkan_smoke(mvk, work, logs, env):
+    """Run real compute and lifecycle operations; unavailable GPU is a skip."""
+    library = Path(mvk) / "static/MoltenVK.xcframework/macos-arm64_x86_64/libMoltenVK.a"
+    if not library.is_file():
+        raise ValueError("MoltenVK release lacks the universal macOS static library")
+    executable = Path(work) / "vulkan-compute-smoke"
+    run(["xcrun", "--sdk", "macosx", "clang", "-std=c11", "-O1",
+         "-Werror=implicit-function-declaration", "-I", Path(mvk) / "include",
+         ROOT / "ios/runtime/Biko3Vulkan.c", ROOT / "tests/native/vulkan_smoke.c",
+         library, "-lc++", "-framework", "Metal", "-framework", "QuartzCore",
+         "-framework", "IOSurface", "-framework", "Foundation", "-o", executable],
+        env=env, log=Path(logs) / "vulkan-macos-build.log")
+    log = Path(logs) / "vulkan-macos-smoke.log"
+    log.parent.mkdir(parents=True, exist_ok=True)
+    with log.open("w", encoding="utf-8") as output:
+        try:
+            result = subprocess.run([str(executable)], env=env, stdout=output,
+                                    stderr=subprocess.STDOUT, timeout=120)
+        except subprocess.TimeoutExpired:
+            output.write("\nFAIL: native Vulkan smoke exceeded 120 seconds\n")
+            raise ValueError("Native Vulkan compute smoke timed out; see vulkan-macos-smoke.log") from None
+        if result.returncode == 77:
+            output.write("\nSKIP: runner GPU unavailable; compute was not verified\n")
+            return {"status": "skipped", "verified": False, "reason": "runner_gpu_unavailable", "exit_code": 77}
+        if result.returncode:
+            output.write(f"\nFAIL: native Vulkan smoke exited {result.returncode}\n")
+            raise ValueError("Native Vulkan compute smoke failed; see vulkan-macos-smoke.log")
+    return {"status": "passed", "verified": True, "exit_code": 0}
+
+
+def bundle_notices(app, source, mvk):
+    destination = Path(app) / "dm/notices"
+    destination.mkdir(parents=True, exist_ok=True)
+    mvk_license = Path(mvk).parent / "LICENSE"
+    if not mvk_license.is_file():
+        raise ValueError("MoltenVK release is missing its license")
+    shutil.copyfile(mvk_license, destination / "MoltenVK-Apache-2.0.txt")
+    for name in ("LICENSE", "THIRD_PARTY.md"):
+        path = ROOT / name
+        if path.is_file():
+            shutil.copyfile(path, destination / ("Biko3-" + name))
+    third_party = Path(source) / "dm/third_party"
+    count = 0
+    for path in sorted(third_party.rglob("*")):
+        if path.is_file() and path.name.upper().startswith(("LICENSE", "COPYING", "NOTICE")):
+            target = destination / "nxnative-third-party" / path.relative_to(third_party)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(path, target)
+            count += 1
+    return {"moltenvk_license_included": True, "nxnative_third_party_notice_files": count}
+
+
+def guest_startup_result(report):
+    if (report.get("status") == "skipped" and report.get("verified") is False and
+            report.get("reason") == "requires_native_arm64_macos"):
+        return False
+    required = ("libnx_initialized", "original_main_entered", "newlib_missing_patch_observed",
+                "original_main_returned", "host_returned_normally")
+    if (report.get("status") != "passed" or report.get("verified") is not True or
+            report.get("exit_code") != 0 or report.get("guest_main_result") != 1 or
+            any(report.get("checks", {}).get(key) is not True for key in required)):
+        raise ValueError("macOS guest startup evidence is incomplete or returned abnormally")
+    return True
+
+
 def macho_sections(data):
     """Parse a thin arm64 executable's segment/section table without macOS tools."""
     if len(data) < 32:
@@ -201,9 +266,15 @@ def build(args):
          "-isysroot", sdk_path, "-I", mvk / "include",
          ROOT / "ios/runtime/Biko3Vulkan.c", ROOT / "tests/native/vulkan_smoke.c"],
         env=env, log=logs / "vulkan-syntax.log")
+    gpu_smoke = native_vulkan_smoke(mvk, work, logs, env)
     run([sys.executable, ROOT / "tools/stage_ios.py", "--nxnative-root", source,
          "--nro", args.nro.resolve(), "--out", output], env=env, log=logs / "stage.log")
     stage = json.loads((output / "stage-report.json").read_text(encoding="utf-8"))
+    run([sys.executable, ROOT / "tools/mac_guest_smoke.py", "--staged", output,
+         "--moltenvk-root", mvk, "--out", logs / "guest-macos"],
+        env=env, log=logs / "guest-macos-driver.log")
+    guest_smoke = json.loads((logs / "guest-macos.json").read_text(encoding="utf-8"))
+    startup_verified = guest_startup_result(guest_smoke)
     ios = output / "ios"
     run(["xcodegen", "generate", "--spec", ios / "project.yml"], cwd=ios, env=env, log=logs / "xcodegen.log")
     run(["xcodebuild", "-project", ios / "Biko3.xcodeproj", "-scheme", "Biko3", "-configuration", "Release",
@@ -212,13 +283,16 @@ def build(args):
          "CODE_SIGN_IDENTITY=", "build"], cwd=ios, env=env, log=logs / "xcodebuild.log")
     app = work / "DerivedData/Build/Products/Release-iphoneos/Biko3.app"
     app_report = inspect_app(app, stage)
+    notice_report = bundle_notices(app, source, mvk)
     ipa = output / "Biko3-development.ipa"
     package(app, ipa)
     report = {"kind": "development-guest-ipa", "signed": False, "runtime_verified": False,
               "playable_verified": False, "contains_guest_executable": True, "contains_game_data": False,
               "data_import": "Documents/game/Data", "guest_sha256": PINNED_SHA256,
               "nxnative_commit": NX_COMMIT, "moltenvk_version": MVK_VERSION,
-              "vulkan_bridge_syntax_checked": True, "vulkan_gpu_smoke_verified": False,
+              "vulkan_bridge_syntax_checked": True, "vulkan_gpu_smoke_verified": gpu_smoke["verified"],
+              "vulkan_gpu_smoke": gpu_smoke, "notices": notice_report,
+              "macos_guest_startup_verified": startup_verified, "macos_guest_smoke": guest_smoke,
               "moltenvk_archive_sha256": MVK_SHA256, "ipa_bytes": ipa.stat().st_size,
               "ipa_sha256": sha256(ipa), **app_report}
     (output / "build-report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

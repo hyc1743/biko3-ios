@@ -8,8 +8,10 @@ and uses native adapters for files, input and PCM audio. Actual Vulkan graphics
 and compute APIs are forwarded to MoltenVK. Original game data is imported
 separately into Documents/game/Data.
 
-Offline staging has generated 104 static hooks and the real embedded image.
-Portable tests pass. Apple compilation is performed by the public repository's
+Offline staging has generated the real embedded image. The current adapter has
+105 static hooks. The initial cloud IPA compiled successfully, and all embedded
+guest bytes matched the independently verified local image. Portable tests pass.
+Apple compilation is performed by the public repository's
 macOS Actions workflow and produces an unsigned development IPA plus a report.
 The build report explicitly distinguishes compilation, runtime and playability.
 

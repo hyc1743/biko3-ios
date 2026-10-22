@@ -12,6 +12,8 @@ void *biko3_platform_create(int argc, char **argv, void *config, char *error);
 int biko3_platform_poll(void *platform, void *state);
 double biko3_platform_time(void *platform);
 void biko3_platform_destroy(void *platform);
+void biko3_platform_error(void *platform, const char *error);
+void biko3_set_error_callback(void (*callback)(const char *));
 /* Buttons use Biko3's game mask; axes are normalized; touch uses panel pixels. */
 void biko3_input_update(uint32_t buttons, float lx, float ly, float rx, float ry,
                         float touch_x, float touch_y, int touching);

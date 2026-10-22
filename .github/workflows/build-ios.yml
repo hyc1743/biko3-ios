@@ -73,7 +73,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Biko3-build-logs
-          path: out/biko3-ios/logs/*.log
+          path: |
+            out/biko3-ios/logs/*.log
+            out/biko3-ios/logs/*.json
           if-no-files-found: ignore
           retention-days: 7
       - name: Remove decrypted input

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <stdatomic.h>
 
 #define BIKO3_HOOK_TABLE 0xfac000u
 #define BIKO3_INIT 0x510700u
@@ -21,6 +22,8 @@ extern void guest_clock_read_wait(void);
 typedef struct { uint32_t key, flags; uint64_t value[2]; } ConfigEntry;
 _Static_assert(sizeof(ConfigEntry) == 24, "libnx homebrew ABI");
 static uint8_t *guest_base;
+typedef void (*error_callback_fn)(const char *);
+static _Atomic(error_callback_fn) error_callback;
 static pthread_mutex_t input_lock = PTHREAD_MUTEX_INITIALIZER;
 static struct {
     uint32_t held, previous;
@@ -55,6 +58,7 @@ void *biko3_libnx_resolve(const char *name) {
     if (!strcmp(name, "biko3_platform_time")) return (void *)biko3_platform_time;
     if (!strcmp(name, "biko3_platform_destroy")) return (void *)biko3_platform_destroy;
     if (!strcmp(name, "biko3_find_device")) return (void *)biko3_find_device;
+    if (!strcmp(name, "biko3_platform_error")) return (void *)biko3_platform_error;
     return biko3_audio_resolve(name);
 }
 
@@ -99,6 +103,7 @@ int biko3_libnx_boot(uint8_t *base, size_t size, uint32_t handle,
     fprintf(stderr, "[biko3] libnx init +%#x, heap %zu MiB\n", BIKO3_INIT, heap_size >> 20);
     ((void (*)(const ConfigEntry *, uint64_t, void *))(base + BIKO3_INIT))(
         config, UINT64_MAX, (void *)loader_return);
+    fprintf(stderr, "[biko3] original libnx init completed\n");
     /* Do not call run_module_inits: libnx's __libc_init_array has already run. */
     fprintf(stderr, "[biko3] entering original main +%#x\n", BIKO3_MAIN);
     int result = ((int (*)(int, char **))(base + BIKO3_MAIN))(argc, argv);
@@ -117,10 +122,10 @@ void *biko3_platform_create(int argc, char **argv, void *out, char *error) {
     (void)argc; (void)argv;
     const char *root = getenv("BIKO3_GAME_ROOT");
     if (!root) root = getenv("DM_ROMFS");
-    const char *save = getenv("BIKO3_CAPTURE_ROOT");
+    const char *save = getenv("BIKO3_SAVE_ROOT");
     if (!save) save = getenv("DM_SAVE");
     if (!root || !*root || !save || !*save) {
-        snprintf(error, 256, "game and captures directories are required");
+        snprintf(error, 256, "game and save directories are required");
         return NULL;
     }
     /* Exact 48-byte output observed at a5e00: pointers at 0,8,16,32;
@@ -139,6 +144,17 @@ void *biko3_platform_create(int argc, char **argv, void *out, char *error) {
 }
 
 void biko3_platform_destroy(void *platform) { free(platform); }
+void biko3_set_error_callback(void (*callback)(const char *)) {
+    atomic_store(&error_callback, callback);
+}
+void biko3_platform_error(void *platform, const char *error) {
+    (void)platform;
+    /* The original error path starts Horizon's text console and waits for HID.
+     * Return the error to the native frontend and let the original main unwind. */
+    fprintf(stderr, "[biko3] game error: %s\n", error ? error : "unknown");
+    error_callback_fn callback = atomic_load(&error_callback);
+    if (callback) callback(error ? error : "unknown");
+}
 
 void biko3_input_update(uint32_t held, float lx, float ly, float rx, float ry,
                         float tx, float ty, int touching) {
