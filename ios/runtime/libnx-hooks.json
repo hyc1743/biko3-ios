@@ -1,0 +1,101 @@
+{
+  "source_nro_sha256": "31320a8ce44f8e1826fc90ed5b26cb714c551413b286f8c69adb03f9e8b07178",
+  "hooks": [
+    {
+      "offset": "0x5105c0",
+      "slot": 1024,
+      "symbol": "biko3_libnx_app_init",
+      "expected": "fd7bafa9fd030091b2adff97c0050035"
+    },
+    {
+      "offset": "0xa5e00",
+      "slot": 1025,
+      "symbol": "biko3_platform_create",
+      "expected": "fd7bbaa9fd030091f35301a9f40302aa"
+    },
+    {
+      "offset": "0xa5a90",
+      "slot": 1026,
+      "symbol": "biko3_platform_poll",
+      "expected": "ffc30ad1fd7b00a9fd030091f35301a9"
+    },
+    {
+      "offset": "0xa5b70",
+      "slot": 1027,
+      "symbol": "biko3_platform_time",
+      "expected": "20e03bd5214e80d2007c019be1f301b2"
+    },
+    {
+      "offset": "0xa5bb0",
+      "slot": 1028,
+      "symbol": "biko3_platform_time",
+      "expected": "20e03bd5214e80d2007c019be1f301b2"
+    },
+    {
+      "offset": "0xa5d60",
+      "slot": 1029,
+      "symbol": "biko3_platform_destroy",
+      "expected": "800400b4fd7bbda9fd030091f35301a9"
+    },
+    {
+      "offset": "0x5f7520",
+      "slot": 1030,
+      "symbol": "biko3_find_device",
+      "expected": "fd7bbaa941078052fd030091f55b02a9"
+    },
+    {
+      "offset": "0x4ff930",
+      "slot": 1031,
+      "symbol": "biko3_audio_initialize",
+      "expected": "ffc308d1fd7b00a9fd030091f35301a9"
+    },
+    {
+      "offset": "0x4ff5f0",
+      "slot": 1032,
+      "symbol": "biko3_audio_exit",
+      "expected": "fd7bbda9fd030091f30b00f9f35400d0"
+    },
+    {
+      "offset": "0x4ff640",
+      "slot": 1033,
+      "symbol": "biko3_audio_rate",
+      "expected": "e05400d000904cb9c0035fd600000000"
+    },
+    {
+      "offset": "0x4ff650",
+      "slot": 1034,
+      "symbol": "biko3_audio_channels",
+      "expected": "e05400d0008c4cb9c0035fd600000000"
+    },
+    {
+      "offset": "0x4ff660",
+      "slot": 1035,
+      "symbol": "biko3_audio_format",
+      "expected": "e05400d000884cb9c0035fd600000000"
+    },
+    {
+      "offset": "0x4ffb10",
+      "slot": 1036,
+      "symbol": "biko3_audio_start",
+      "expected": "2000805287feff170000000000000000"
+    },
+    {
+      "offset": "0x4ffb20",
+      "slot": 1037,
+      "symbol": "biko3_audio_stop",
+      "expected": "4000805283feff170000000000000000"
+    },
+    {
+      "offset": "0x4ffb30",
+      "slot": 1038,
+      "symbol": "biko3_audio_append",
+      "expected": "fd7bbea9fd030091f30b00f9f30300aa"
+    },
+    {
+      "offset": "0x4ffd00",
+      "slot": 1039,
+      "symbol": "biko3_audio_released",
+      "expected": "fd7bbea9fd030091f35301a9f40301aa"
+    }
+  ]
+}

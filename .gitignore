@@ -1,0 +1,16 @@
+# Original game data and private material stay local.
+*.keys
+*.nsp
+switch/
+
+# Downloaded dependencies and generated analysis.
+.tools/
+references/
+work/
+out/
+artifacts/
+out/
+__pycache__/
+*.pyc
+.DS_Store
+

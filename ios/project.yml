@@ -1,0 +1,69 @@
+name: Biko3
+options:
+  deploymentTarget:
+    iOS: "26.0"
+configFiles:
+  Debug: Gen/dm.xcconfig
+  Release: Gen/dm.xcconfig
+targets:
+  Biko3:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+      - Gen/src
+      - path: Gen/embed.S
+      - path: Gen/main/main.c
+        compilerFlags: "-Dmain=dm_main"
+      - path: Gen/dm
+        type: folder
+        buildPhase: resources
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleDisplayName: Biko3
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
+        UIRequiresFullScreen: true
+        UIStatusBarHidden: true
+        UIViewControllerBasedStatusBarAppearance: false
+        UILaunchStoryboardName: ""
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationLandscapeRight
+          - UIInterfaceOrientationLandscapeLeft
+        GCSupportsControllerUserInteraction: true
+        GCSupportedGameControllers:
+          - ProfileName: ExtendedGamepad
+        CADisableMinimumFrameDurationOnPhone: true
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Default
+                UISceneDelegateClassName: SceneDelegate
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: io.github.hyc1743.biko3
+      PRODUCT_NAME: Biko3
+      MARKETING_VERSION: "0.1.0"
+      CURRENT_PROJECT_VERSION: "1"
+      CODE_SIGNING_ALLOWED: NO
+      CODE_SIGNING_REQUIRED: NO
+      TARGETED_DEVICE_FAMILY: "1,2"
+      ARCHS: arm64
+      ONLY_ACTIVE_ARCH: NO
+      ENABLE_BITCODE: NO
+      GCC_C_LANGUAGE_STANDARD: gnu11
+      CLANG_ENABLE_OBJC_ARC: YES
+      CLANG_CXX_LANGUAGE_STANDARD: gnu++17
+      DEBUG_INFORMATION_FORMAT: dwarf
+      OTHER_CFLAGS: $(inherited) -mcpu=apple-a18 -DVK_USE_PLATFORM_METAL_EXT=1 -DVK_USE_PLATFORM_VI_NN=1
+      GCC_WARN_INHIBIT_ALL_WARNINGS: YES
+schemes:
+  Biko3:
+    build:
+      targets:
+        Biko3: all
+    run:
+      config: Release

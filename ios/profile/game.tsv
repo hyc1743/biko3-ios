@@ -1,0 +1,16 @@
+# Synthetic host profile identifier; this is not an asserted retail title ID.
+title_id	000000000000B103
+program_id	000000000000B103
+name	Biko3
+ipa	Biko3-development.ipa
+app_category	public.app-category.games
+pad_layout	full
+package	nro-local
+modules	main
+romfs_marker	Data/bk3_00.pp
+mem_reserve	0x100000000
+mem_alias	0x10000000
+mem_stack	0x10000000
+app_pool	0xCD500000
+game_args	
+op_mode	handheld
