@@ -134,14 +134,15 @@ class GitHub:
         self.api("PUT", path + "/" + name,
                  {"encrypted_value": base64.b64encode(encrypted).decode(), "key_id": public["key_id"]})
 
-    def create_release(self, repo, tag, target_sha, body):
+    def create_release(self, repo, tag, target_sha, body, *, stable=False):
         if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", tag) or not re.fullmatch(r"[0-9a-fA-F]{40}", target_sha):
             raise ValueError("Release requires a simple tag and exact 40-character commit SHA")
         if not body.strip():
             raise ValueError("Release requires reviewed Markdown text")
         return self.api("POST", "/repos/" + repository(repo) + "/releases",
                         {"tag_name": tag, "target_commitish": target_sha, "name": tag,
-                         "body": body, "draft": False, "prerelease": True, "make_latest": "false"})
+                         "body": body, "draft": False, "prerelease": not stable,
+                         "make_latest": "true" if stable else "false"})
 
     def upload_release_asset(self, repo, release_id, path, *, progress=None):
         path = Path(path)
@@ -160,11 +161,11 @@ class GitHub:
             raise ValueError("GitHub release asset upload was incomplete")
         return {key: result[key] for key in ("id", "name", "size", "browser_download_url")}
 
-    def upload_release_assets(self, repo, release_id, paths):
+    def upload_release_assets(self, repo, release_id, paths, *, stable=False):
         files = release_files(paths)
         release = self.api("GET", f"/repos/{repository(repo)}/releases/{int(release_id)}")
-        if release.get("prerelease") is not True or release.get("draft") is not False:
-            raise ValueError("Development assets require a published prerelease")
+        if release.get("prerelease") is not (not stable) or release.get("draft") is not False:
+            raise ValueError("Release type must match the explicitly selected stable/prerelease mode")
         existing = {item["name"] for item in release.get("assets", [])}
         if existing.intersection(path.name for path in files):
             raise ValueError("Release already contains an asset with a requested name")
@@ -354,10 +355,12 @@ def main(argv=None):
     release.add_argument("tag")
     release.add_argument("--target-sha", required=True)
     release.add_argument("--body-file", type=Path, required=True)
+    release.add_argument("--stable", action="store_true", help="Explicitly publish a regular release as latest")
     assets = commands.add_parser("upload-release-assets")
     assets.add_argument("repo")
     assets.add_argument("release_id", type=int)
     assets.add_argument("files", nargs="+", type=Path)
+    assets.add_argument("--stable", action="store_true", help="Explicitly allow assets on a regular release")
     review = commands.add_parser("review")
     review.add_argument("--root", type=Path, default=Path.cwd())
     review.add_argument("--manifest", type=Path, required=True)
@@ -409,10 +412,10 @@ def main(argv=None):
             response = github.create_public(args.name, args.description)
             result = {key: response[key] for key in ("full_name", "html_url", "private")}
         elif args.command == "release":
-            response = github.create_release(args.repo, args.tag, args.target_sha, args.body_file.read_text(encoding="utf-8"))
+            response = github.create_release(args.repo, args.tag, args.target_sha, args.body_file.read_text(encoding="utf-8"), stable=args.stable)
             result = {key: response[key] for key in ("id", "tag_name", "html_url", "prerelease", "target_commitish")}
         elif args.command == "upload-release-assets":
-            result = github.upload_release_assets(args.repo, args.release_id, args.files)
+            result = github.upload_release_assets(args.repo, args.release_id, args.files, stable=args.stable)
         elif args.command == "publish":
             result = publish(github, args.repo, args.root, args.manifest, args.branch, args.message)
         elif args.command == "dispatch":

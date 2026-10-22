@@ -126,7 +126,7 @@ class CloudTests(unittest.TestCase):
         self.assertNotIn("private-secret", str(args))
         self.assertEqual(SealedBox(private).decrypt(base64.b64decode(args[2]["encrypted_value"])), b"private-secret")
 
-    def test_release_requires_exact_commit_and_is_always_a_prerelease(self):
+    def test_release_requires_exact_commit_and_defaults_to_prerelease(self):
         github = GitHub("test-token")
         with patch.object(github, "api", return_value={}) as api:
             github.create_release("owner/biko3-ios", "development-001", "a" * 40, "Import Data manually; device runtime unverified.")
@@ -137,6 +137,15 @@ class CloudTests(unittest.TestCase):
             self.assertEqual(payload["target_commitish"], "a" * 40)
             with self.assertRaises(ValueError):
                 github.create_release("owner/biko3-ios", "development-001", "main", "Unverified")
+
+    def test_regular_release_requires_explicit_stable_selection(self):
+        github = GitHub("test-token")
+        with patch.object(github, "api", return_value={}) as api:
+            github.create_release("owner/biko3-ios", "v0.1.1", "a" * 40, "Existing Chinese patch enabled.", stable=True)
+            payload = api.call_args.args[2]
+            self.assertFalse(payload["prerelease"])
+            self.assertFalse(payload["draft"])
+            self.assertEqual(payload["make_latest"], "true")
 
     def test_release_assets_require_report_hash_flags_and_allowed_location(self):
         with tempfile.TemporaryDirectory() as tmp:
