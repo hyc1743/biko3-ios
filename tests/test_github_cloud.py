@@ -13,10 +13,24 @@ import urllib.request
 import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-from github_cloud import GitHub, SafeRedirect, UploadRedirect, credential, publication_files, release_files
+from github_cloud import GitHub, SafeRedirect, UploadRedirect, credential, publication_files, release_files, APP_ICON_PATH
 
 
 class CloudTests(unittest.TestCase):
+    def test_only_reviewed_user_icon_is_allowed_as_public_image(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            icon = root / APP_ICON_PATH
+            icon.parent.mkdir(parents=True)
+            source = Path(__file__).resolve().parents[1] / APP_ICON_PATH
+            icon.write_bytes(source.read_bytes())
+            manifest = root / "manifest.json"
+            manifest.write_text(json.dumps([APP_ICON_PATH]))
+            self.assertEqual(publication_files(root, manifest)[0][0], APP_ICON_PATH)
+            icon.write_bytes(source.read_bytes() + b"unexpected")
+            with self.assertRaisesRegex(ValueError, "reviewed user-supplied"):
+                publication_files(root, manifest)
+
     def test_credential_uses_noninteractive_capture_and_never_commandline_token(self):
         result = subprocess.CompletedProcess([], 0, "username=test\npassword=secret-value\n", "")
         with patch.dict(os.environ, {}, clear=True), patch("github_cloud.git_executable", return_value="git"), patch("github_cloud.subprocess.run", return_value=result) as run:

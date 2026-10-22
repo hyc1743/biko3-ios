@@ -24,6 +24,9 @@ import urllib.request
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
+APP_ICON_PATH = "ios/Assets.xcassets/AppIcon.appiconset/AppIcon.png"
+# Exact user-supplied artwork resized to an opaque 1024px app icon.
+APP_ICON_SHA256 = "fc52f433c0ab7b0d537f3bae46a9b4c2887212e0246b71ad913e39440c084c47"
 
 
 def git_executable():
@@ -259,6 +262,9 @@ def publication_files(root, manifest):
         if entry == "ci-inputs/guest.enc":
             from ci_guest import inspect_container
             inspect_container(data)
+        elif entry == APP_ICON_PATH:
+            if hashlib.sha256(data).hexdigest() != APP_ICON_SHA256:
+                raise ValueError("App icon differs from the reviewed user-supplied artwork")
         elif (len(data) > 5 * 1024 * 1024 or b"\0" in data or
               re.search(rb"(?m)^-----BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-----\r?$", data)):
             raise ValueError("Publication entry is binary, oversized or contains a private key: " + entry)

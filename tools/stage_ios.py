@@ -105,6 +105,21 @@ def frontend(text):
     return text
 
 
+def gamepad(text):
+    """Use the Biko3 diamond on both touch and positional GameController input."""
+    text = replace_once(text,
+        'switch (b) { case B_A: return CGPointMake(c.x + g, c.y); case B_B: return CGPointMake(c.x, c.y + g); case B_X: return CGPointMake(c.x, c.y - g); default: return CGPointMake(c.x - g, c.y); }',
+        'switch (b) { case B_A: return CGPointMake(c.x, c.y + g); case B_B: return CGPointMake(c.x + g, c.y); case B_X: return CGPointMake(c.x - g, c.y); default: return CGPointMake(c.x, c.y - g); }')
+    text = replace_once(text,
+        'K(g.buttonB, B_A); K(g.buttonA, B_B); K(g.buttonY, B_X); K(g.buttonX, B_Y);   // by position: right A, bottom B, top X, left Y',
+        'K(g.buttonA, B_A); K(g.buttonB, B_B); K(g.buttonX, B_X); K(g.buttonY, B_Y);   // by position: bottom A, right B, left X, top Y')
+    # Keep the staged source's layout notes consistent with its actual controls.
+    text = text.replace('A (right) B (bottom) X (top) Y (left)', 'A (bottom) B (right) X (left) Y (top)')
+    text = text.replace('bottom = B, right = A, left = Y, top = X (same positions as on a Switch controller)',
+                        'bottom = A, right = B, left = X, top = Y (Biko3 layout)')
+    return text
+
+
 def patch_sources(source, profile, runtime):
     host = source / "dm/host"
     (host / "main.c").write_bytes(patch_main((host / "main.c").read_bytes()))
@@ -131,6 +146,7 @@ void biko3_read_native_pad(uint64_t *buttons, int32_t axes[4]) {
     (host / "hle_hid.c").write_text(hid, encoding="utf8")
     # The upstream front end manages the touch/controller UI and iOS lifecycle.
     ui = source / "dm/ios/Sources"
+    (ui / "DmGamepad.m").write_text(gamepad((ui / "DmGamepad.m").read_text(encoding="utf8")), encoding="utf8")
     (ui / "main.m").write_text(frontend((ui / "main.m").read_text(encoding="utf8")), encoding="utf8")
     front = (ui / "front_ios.m").read_text(encoding="utf8")
     front = '#include "Biko3Vulkan.h"\n#include "Biko3Audio.h"\n' + front
@@ -181,6 +197,7 @@ def stage(args):
     (profile / "Biko3HookTable.h").write_text(binding_header(hooks, image.build_id), encoding="utf8")
     ios = out / "ios"
     shutil.copytree(source / "dm/ios/Sources", ios / "Sources")
+    shutil.copytree(ROOT / "ios/Assets.xcassets", ios / "Sources/Assets.xcassets")
     for path in (ROOT / "ios/import").iterdir():
         if path.suffix in {".h", ".m"}:
             shutil.copyfile(path, ios / "Sources" / path.name)

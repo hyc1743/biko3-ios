@@ -269,7 +269,11 @@ def inspect_app(app, stage):
         raise ValueError("Embedded guest text does not contain the preserved NRO header")
     if executable_segments != ["__TEXT"]:
         raise ValueError("The app must have one executable segment (__TEXT)")
+    primary_icon = info.get("CFBundleIcons", {}).get("CFBundlePrimaryIcon", {})
+    if primary_icon.get("CFBundleIconName") != "AppIcon" or not (app / "Assets.car").is_file():
+        raise ValueError("The compiled application icon is missing")
     return {"bundle_id": info["CFBundleIdentifier"], "minimum_ios": "26.0", "arm64": True,
+            "app_icon": "AppIcon",
             "guest_sections": {",".join(key): sections[key]["size"] for key in required},
             "executable_sha256": hashlib.sha256(data).hexdigest()}
 

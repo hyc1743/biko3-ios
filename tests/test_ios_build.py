@@ -121,13 +121,18 @@ class IosBuildTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             app = Path(tmp) / "Biko3.app"
             app.mkdir()
-            (app / "Info.plist").write_bytes(plistlib.dumps({"CFBundleIdentifier": "io.github.hyc1743.biko3", "MinimumOSVersion": "26.0", "CFBundleExecutable": "Biko3"}))
+            (app / "Info.plist").write_bytes(plistlib.dumps({"CFBundleIdentifier": "io.github.hyc1743.biko3", "MinimumOSVersion": "26.0", "CFBundleExecutable": "Biko3", "CFBundleIcons": {"CFBundlePrimaryIcon": {"CFBundleIconName": "AppIcon"}}}))
+            (app / "Assets.car").write_bytes(b"compiled icon fixture")
             binary = executable()
             (app / "Biko3").write_bytes(binary)
             stage = {"guest_sha256": PINNED_SHA256, "source_commit": NX_COMMIT, "guest_embedded": True}
             report = inspect_app(app, stage)
             self.assertTrue(report["arm64"])
             self.assertEqual(len(report["guest_sections"]), 3)
+            (app / "Assets.car").unlink()
+            with self.assertRaisesRegex(ValueError, "application icon"):
+                inspect_app(app, stage)
+            (app / "Assets.car").write_bytes(b"compiled icon fixture")
             for changed in (dict(stage, guest_embedded=False), dict(stage, guest_sha256="0" * 64)):
                 with self.assertRaises(ValueError):
                     inspect_app(app, changed)

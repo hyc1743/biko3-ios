@@ -1,51 +1,96 @@
-# Biko3 iOS 移植
+# 尾行 3 · Biko3 iOS
 
-目标：将现有 Switch NRO 和游戏资源移植到未越狱 iPhone，保留原有玩法。
+在 iPhone 上游玩《尾行 3》，支持横屏、屏幕虚拟手柄和实体手柄。
 
-**原生 iOS 宿主正在开发和云端验证中，尚未验证游戏可玩。** 已接入真实客体代码、libnx 启动、原生文件系统、音频、触控/手柄及 MoltenVK 图形与计算路径；构建成功也不代表设备验证完成。
+## 准备
 
-## 云端构建与安装
+- 安装 iOS 26 或更新版本的 iPhone。
+- 从 [Releases](https://github.com/hyc1743/biko3-ios/releases) 下载新版 `Biko3-development.ipa`，使用自己的签名与侧载工具安装。IPA 未签名，项目不提供签名证书。
+- 准备你自己的完整游戏 `Data` 文件夹。IPA 和本仓库均不附带游戏数据或资源分卷。
+- 手机需要容纳约 3 GB 的分卷和约 3 GB 的展开数据，首次导入时请预留足够空间。
 
-公共仓库为 hyc1743/biko3-ios，Actions 的 Build Biko3 development IPA 工作流使用 macOS 26/Xcode，打包真实嵌入的客体程序，不生成替代游戏的空壳。成功后下载 Biko3-development-IPA artifact 中的 IPA 和 build-report.json。未签名的开发 IPA 需要通过自己的侧载签名工具安装。
+## 安装游戏资源
 
-游戏 Data 资源不在仓库或 IPA 中。dev.2 起可将六个资源分卷复制到 Biko3 的文件共享根目录，首次启动自动校验并展开到 Documents/game/Data，显示进度并支持失败重试，详见[资源分卷导入](docs/resource-packs.md)。也可继续手动复制完整 Data。存档位于 Documents/saves，日志位于 Documents/log.txt。当前设备启动、第一帧、完整玩法及存档兼容性仍待验证。
+推荐先把 Data 打成六个大文件，再传入手机，避免逐个复制小文件。已导入过资源的玩家更新 IPA 后可以继续使用原有数据。
 
-云端原始 NRO 输入使用 AES-GCM 容器，只有 Actions Secret BIKO3_GUEST_KEY 可以解密。密钥、NSP 和游戏 Data 不提交。构建产物会包含移植后的客体程序。
+### 1. 在电脑上打包
 
-## 已完成
-
-- Ghidra 12.1.4、Temurin JDK 21 已安装到项目 .tools/，安装包 SHA-256 校验通过。
-- 三个参考仓库按 references.lock.json 固定版本取得，含源码、构建元数据和许可证；3,177 个文件经过 Git blob 与 SHA-256 校验。
-- 从原始 DWARF 异常帧恢复 13,639 个函数范围，解决 NRO 缺少 eh_frame_hdr 索引的问题。
-- 对固定 nxnative 源码副本作两处有记录的兼容修改，完整外部改写器和嵌入生成器均实际执行成功；原始 NRO、资源与 RELR addend 保持不变。
-- Ghidra 成功导出启动链、Vulkan 入口及渲染器等 10 个目标函数的伪代码。全量分析曾内存不足，成功结果来自有范围限制的聚焦分析。
-- 提取 6 个由实际创建参数确认精确长度的 SPIR-V：2 个顶点、2 个片元、2 个计算着色器。
-- 原生宿主与完整接管清单已集成。首轮云端 IPA 已成功构建并逐字节验证客体映像；可移植回归测试通过，当前结果和进一步的原生执行检查见 Actions。
-
-## 复现
-
-Python 工具使用标准库；指令改写与着色器分析另需当前环境已有的 capstone、lz4。
+下载本仓库源码，安装 Python 3.12 或更新版本，在项目目录执行：
 
 ```powershell
-python tools/bootstrap_analysis.py --task all
-python -m unittest discover -s tests -v
+python tools/pack_resources.py pack --data "D:/你的游戏/Data" --out "out/resource-packs"
+python tools/pack_resources.py verify --parts "out/resource-packs" --data "D:/你的游戏/Data"
 ```
 
-下面的输出目录必须尚不存在。重复运行时更换 run-01：
+将示例路径替换成自己的 Data 路径。输出目录必须尚不存在；重复打包时请换一个目录。工具只使用 Python 标准库，无需另装 Python 依赖。
 
-```powershell
-python tools/prepare_nxnative.py switch/biko3/biko3-runtime.nro --out work/biko3-ios/run-01/prepared
-python tools/rewrite_nro.py switch/biko3/biko3-runtime.nro --prepared work/biko3-ios/run-01/prepared --nxnative-root references/seedds--nxnative --out work/biko3-ios/run-01/rewritten
-python tools/extract_embedded_spirv.py switch/biko3/biko3-runtime.nro --out work/biko3-ios/run-01/shaders
-powershell -NoProfile -File tools/run_ghidra_focus.ps1 -Boundaries work/biko3-ios/run-01/prepared/main.function-boundaries.json -Output work/biko3-ios/run-01/ghidra
+打包后得到 `Biko3Data.part001.b3data` 至 `Biko3Data.part006.b3data`。应用内置匹配的文件清单，只有路径、大小和内容与该清单一致的原始 Data 才能导入；修改版或其他版本的资源可能无法通过校验。
+
+### 2. 复制到 iPhone
+
+首次打开 Biko3，让应用创建文件目录。然后通过“文件”App，或电脑上的 Apple Devices / iTunes 文件共享，将 **六个 `.b3data` 文件**复制到：
+
+```text
+文件 → 我的 iPhone → Biko3
 ```
 
-rewrite_nro.py 会执行已审查且哈希固定的完整外部 Python 改写器，保存修改差异、stdout/stderr、版本及产物摘要，不执行游戏。生成汇编使用本机构建路径，转到 macOS 后必须重新生成。
+直接放在 Biko3 根目录即可，也可以放到其中的 `ResourcePacks` 文件夹。保持原文件名，无需复制 JSON 清单，也不要手动解压分卷。
 
-## 验证与剩余工作
+### 3. 自动导入
 
-1. **libnx 启动与平台接口。** 宿主负责单次重定位，保留原 newlib/TLS/构造函数，文件访问通过 devoptab 接入。需要用实际启动日志验证这些接口和原始工作线程。
-2. **完整图形路径。** 88 个 Vulkan 转接点使用真实 MoltenVK，包含两个计算着色器。NN 窗口表面、NVK 专属限制和生命周期已加入适配，能力、画面和同步结果仍需 Apple 平台实测。
-3. **真机流程。** 验收依次覆盖客体启动、第一帧、操作、完整玩法、声音、存档、后台恢复和持续运行。未满足这些条件前不宣称可玩。
+返回 Biko3，应用会自动校验并展开资源，界面显示当前进度。请保持应用在前台。
 
-公开进度见 [当前状态](docs/port-status.md)、[图形桥接](docs/graphics-bridge.md)、[libnx 启动](docs/libnx-startup.md)、[离线准备说明](docs/nxnative-preparation.md)。
+- 提示缺卷或校验失败：补齐或重新复制提示中的文件，再点“重新检查 / 继续解包”。
+- 中断后重开：已完成且校验正确的文件会保留，未完成文件重新展开。
+- 导入完成：自动进入游戏。确认可以游玩后，可删除手机里的六个分卷，释放约 3 GB 空间；保留 `game/Data`。
+
+也可直接复制完整 Data，目录结构必须是 `Biko3/game/Data`，避免多嵌套一层 `Data/Data`。dev.2 起支持分卷导入；新图标与下述手柄布局从 dev.3 起提供。更多说明见[资源分卷指南](docs/resource-packs.md)。
+
+## 操作
+
+虚拟手柄与实体手柄按相同的位置映射：
+
+```text
+       Y
+   X       B
+       A
+```
+
+| 位置 | 游戏按键 |
+| --- | --- |
+| 上 | Y |
+| 下 | A |
+| 左 | X |
+| 右 | B |
+
+实体手柄按四个面键的物理位置映射；不同品牌的印刷字样可能不同。肩键、扳机、方向键和摇杆保持各自功能。
+
+连接系统可识别的实体手柄后，虚拟手柄自动隐藏，断开后恢复。虚拟手柄顶部的 `2D / 3D` 按钮用于切换布局；需要方向键和右摇杆时切换至 `3D`。右摇杆通过右侧空白区域滑动操作。
+
+## 存档、更新和日志
+
+以下路径均以“文件 → 我的 iPhone → Biko3”为根目录：
+
+| 路径 | 内容 |
+| --- | --- |
+| `game/Data` | 展开后的游戏资源，游玩时需保留 |
+| `ResourcePacks` | 可选的资源分卷存放目录 |
+| `saves` | 存档，建议定期备份 |
+| `log.txt` | 本次启动与运行日志 |
+| `log.prev.txt` | 上一次运行日志 |
+
+更新时用相同应用标识覆盖安装，先备份 `saves`，避免通过卸载应用来更新而丢失本地数据。
+
+遇到闪退、黑屏、无声或操作异常，可在 [Issues](https://github.com/hyc1743/biko3-ios/issues) 提供 iPhone 型号、iOS 版本、应用版本、复现步骤，以及 `log.txt` 和 `log.prev.txt`。画面问题可附截图或录屏。只保留上一轮日志，出问题后请尽快导出，避免连续重启覆盖。日志保存在本机，不会自动上传。
+
+## 参考项目与致谢
+
+感谢以下项目及其贡献者：
+
+- [seedds/nxnative](https://github.com/seedds/nxnative)：本项目使用的原生宿主、指令改写工具、平台服务及触控／手柄前端的基础。
+- [jhaizhou-ops/d2r-mobile](https://github.com/jhaizhou-ops/d2r-mobile)：参考其将原有游戏适配到 iOS 的实现与使用体验设计。
+- [LNPANDY/nxnative-romfs-archive](https://github.com/LNPANDY/nxnative-romfs-archive)：参考其解决大量资源文件传输与安装问题的分卷思路。本项目使用自己的 `.b3data` 格式并在首次启动时展开资源。
+- [KhronosGroup/MoltenVK](https://github.com/KhronosGroup/MoltenVK)：将 Vulkan 图形与计算调用接到 Metal。
+- [switchbrew/libnx](https://github.com/switchbrew/libnx) 及相关工具链贡献者：平台接口资料与运行时兼容参考。
+
+各项目保留其原有许可证，详见 [THIRD_PARTY.md](THIRD_PARTY.md)。本仓库原创适配代码与工具使用 [MIT 许可证](LICENSE)；游戏程序、图像及其他资源的权利归原权利人所有。
