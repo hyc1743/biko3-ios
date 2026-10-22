@@ -56,6 +56,8 @@ jobs:
           BIKO3_GUEST_KEY: ${{ secrets.BIKO3_GUEST_KEY }}
         run: python tools/ci_guest.py open ci-inputs/guest.enc "$RUNNER_TEMP/biko3-guest.nro"
       - name: Fetch pinned source references without Windows analysis dependencies
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: python tools/bootstrap_analysis.py --task references
       - name: Stage, compile and inspect actual guest IPA
         run: python tools/build_ios.py --nro "$RUNNER_TEMP/biko3-guest.nro" --output out/biko3-ios

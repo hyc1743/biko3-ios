@@ -12,6 +12,7 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path, PurePosixPath
 import platform
 import re
@@ -48,8 +49,16 @@ def source_filter() -> dict:
 def request(url: str):
     # Intentionally preserve the default proxy handling. Do not disable proxy
     # settings or certificate validation to evade an execution environment limit.
-    req = urllib.request.Request(url, headers={"User-Agent": "biko3-ios-analysis/1",
-                                              "Accept": "application/vnd.github+json"})
+    headers = {"User-Agent": "biko3-ios-analysis/1", "Accept": "application/vnd.github+json"}
+    # Hosted runners share anonymous API quotas. Scope the Actions token to the
+    # API host only; raw sources and release redirects never receive it.
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    req = urllib.request.Request(url, headers=headers)
+    parsed = urllib.parse.urlparse(url)
+    if token and parsed.scheme == "https" and parsed.hostname == "api.github.com":
+        # Unredirected headers are sent on this request only, never forwarded by
+        # urllib's redirect handler to a raw source or release storage host.
+        req.add_unredirected_header("Authorization", "Bearer " + token)
     return urllib.request.urlopen(req, timeout=15, context=ssl.create_default_context())
 
 

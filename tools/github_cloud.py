@@ -158,7 +158,7 @@ class GitHub:
 
     def runs(self, repo, workflow, branch):
         path = "/repos/" + repository(repo) + "/actions/workflows/" + urllib.parse.quote(workflow, safe="")
-        query = urllib.parse.urlencode({"branch": branch, "event": "workflow_dispatch", "per_page": 20})
+        query = urllib.parse.urlencode({"branch": branch, "per_page": 20})
         return self.api("GET", path + "/runs?" + query)["workflow_runs"]
 
     def artifacts(self, repo, run_id):

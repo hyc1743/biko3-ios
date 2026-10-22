@@ -15,6 +15,20 @@ spec.loader.exec_module(bootstrap)
 
 
 class ArchiveTests(unittest.TestCase):
+    def test_actions_api_token_is_never_sent_to_sources_or_redirects(self):
+        with patch.dict(bootstrap.os.environ, {"GH_TOKEN": "test-only-token"}, clear=True), \
+             patch.object(bootstrap.urllib.request, "urlopen") as open_url:
+            bootstrap.request("https://api.github.com/repos/seedds/nxnative")
+            request = open_url.call_args.args[0]
+            self.assertEqual(request.get_header("Authorization"), "Bearer test-only-token")
+            redirect = bootstrap.urllib.request.HTTPRedirectHandler().redirect_request(
+                request, None, 302, "Found", {}, "https://raw.githubusercontent.com/source")
+            self.assertIsNone(redirect.get_header("Authorization"))
+            for url in ("https://raw.githubusercontent.com/source", "https://github.com/release",
+                        "https://api.github.com.example.org/source", "http://api.github.com/source"):
+                bootstrap.request(url)
+                self.assertIsNone(open_url.call_args.args[0].get_header("Authorization"))
+
     @classmethod
     def setUpClass(cls):
         if not TEMP_ROOT.resolve().is_relative_to(SCRIPT.parents[1]):
