@@ -49,6 +49,7 @@ def smoke(prefix):
                       fixture_bytes=manifest["total_bytes"])
         executable = work / "resource-import-test"
         command = ["xcrun", "--sdk", "macosx", "clang", "-O1", "-g", "-fobjc-arc", "-fblocks",
+                   "-fsanitize=address,undefined", "-fno-omit-frame-pointer",
                    "-Werror=implicit-function-declaration", "-I", str(ROOT / "ios/import"),
                    str(ROOT / "ios/import/Biko3ResourceInstaller.m"),
                    str(ROOT / "tests/native/resource_import.m"), "-framework", "Foundation",

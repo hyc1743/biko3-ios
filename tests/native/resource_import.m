@@ -56,6 +56,8 @@ static NSURL *ManifestCopy(NSString *name, void (^change)(NSMutableDictionary *)
 }
 
 int main(int argc, char **argv) {
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
     @autoreleasepool {
         Require(argc == 5, @"expected manifest, parts, source Data, workspace");
         fm = NSFileManager.defaultManager;
