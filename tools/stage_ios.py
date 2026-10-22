@@ -25,6 +25,36 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def stage_localization(source: Path, destination: Path):
+    """Bundle only an explicitly reviewed, hash-bound merged localization PP."""
+    manifest = source / "bundle.json"
+    patch = source / "patch.pp"
+    if not manifest.exists() and not patch.exists():
+        return {"included": False}
+    if not manifest.is_file() or not patch.is_file() or manifest.is_symlink() or patch.is_symlink():
+        raise ValueError("Localization patch requires a regular patch.pp and bundle.json")
+    spec = json.loads(manifest.read_text(encoding="utf-8"))
+    if (spec.get("schema") != 1 or spec.get("file") != "patch.pp"
+            or spec.get("sha256") != sha(patch) or spec.get("bytes") != patch.stat().st_size
+            or spec.get("base_patch_sha256") != "5aa69af72f240d6cf2fa1d12293564256bef120b1c1a70cb210e597927df9f42"
+            or spec.get("reviewed") is not True):
+        raise ValueError("Localization patch review or identity mismatch")
+    from biko3_assets import legacy_entries
+    rows = legacy_entries(patch)
+    config = next((row for row in rows if row[0] == "patch.cfg"), None)
+    if config is None:
+        raise ValueError("Localization patch lacks engine configuration")
+    with patch.open("rb") as stream:
+        stream.seek(config[1])
+        config_bytes = bytes((-v) & 255 for v in stream.read(config[2]))
+    if config_bytes != b"BKPT\x02\0\0\0\x03\0\0\0":
+        raise ValueError("Unsupported localization patch configuration")
+    destination.mkdir(parents=True, exist_ok=False)
+    shutil.copyfile(patch, destination / "patch.pp")
+    shutil.copyfile(manifest, destination / "bundle.json")
+    return {"included": True, "sha256": spec["sha256"], "bytes": spec["bytes"]}
+
+
 def replace_once(text, old, new):
     if text.count(old) != 1:
         raise ValueError("Reviewed host source anchor changed: " + old[:80])
@@ -69,6 +99,9 @@ def frontend(text):
     text = replace_once(text, 'setenv("DM_ROMFS", romfs.fileSystemRepresentation, 0);',
                         'setenv("DM_ROMFS", romfs.fileSystemRepresentation, 0);\n'
                         '    setenv("BIKO3_GAME_ROOT", romfs.fileSystemRepresentation, 1);\n'
+                        '    NSString *localizationPatch = [NSBundle.mainBundle.resourceURL URLByAppendingPathComponent:@"dm/localization/patch.pp"].path;\n'
+                        '    if ([NSFileManager.defaultManager fileExistsAtPath:localizationPatch])\n'
+                        '        setenv("BIKO3_LOCALIZATION_PATCH", localizationPatch.fileSystemRepresentation, 1);\n'
                         '    setenv("BIKO3_SAVE_ROOT", [doc stringByAppendingPathComponent:@"saves"].fileSystemRepresentation, 1);\n'
                         '    setenv("BIKO3_CAPTURE_ROOT", [doc stringByAppendingPathComponent:@"captures"].fileSystemRepresentation, 1);')
     text = replace_once(text, 'setvbuf(stderr, NULL, _IOLBF, 0);',
@@ -214,6 +247,7 @@ def stage(args):
     dm = gen / "dm"
     dm.mkdir(parents=True)
     shutil.copyfile(ROOT / "ios/resources/Biko3Data.manifest.json", dm / "Biko3Data.manifest.json")
+    localization = stage_localization(ROOT / "ios/localization", dm / "localization")
     for path in hooked.glob("*.tsv"):
         shutil.copyfile(path, dm / path.name)
     for name in ("shader_map.tsv", "pso_manifest.tsv"):
@@ -243,6 +277,7 @@ def stage(args):
               "project": "ios/project.yml", "host_root": "work/nxnative-staged/dm/host",
               "patched_dir": "rewritten-bindings", "hook_count": len(hooks["hooks"]),
               "quicksave_probe_enabled": args.quicksave_probe,
+              "localization_patch": localization,
               "patched_sha256": sha(hooked / "main.patched.bin"),
               "assembly_sha256": sha(gen / "embed.S"), "project_sources_generated": not args.prepare_only,
               "compiled": False, "runtime_verified": False}

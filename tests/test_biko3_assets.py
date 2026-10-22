@@ -3,12 +3,97 @@ import unittest
 from pathlib import Path
 import sys
 import tempfile
+import json
+import hashlib
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-from biko3_assets import decode_tbl, index_entries, legacy_entries, replace_entry
+from biko3_assets import (decode_tbl, index_entries, legacy_entries, replace_entry,
+                         apply_resource_patch, encode_resource_patch, write_legacy_archive,
+                         supplement_patch, build_inventory, audit_existing_patch)
 
 
 class Biko3AssetTests(unittest.TestCase):
+    def test_supplement_preserves_existing_chinese_and_requires_source_hash(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data = root / "Data"
+            data.mkdir()
+            replacements = root / "replacements"
+            replacements.mkdir()
+            original = b"original Japanese fixture"
+            chinese = b"existing Chinese fixture"
+            translated = b"new Japanese-only translation fixture"
+            config = b"BKPT\x02\0\0\0\x03\0\0\0"
+            preserved = encode_resource_patch(b"other original", b"other Chinese")
+            write_legacy_archive(data / "bk3_05.pp", [("dialog.txt", original)])
+            existing = encode_resource_patch(original, chinese)
+            write_legacy_archive(data / "patch.pp", [("patch.cfg", config),
+                                 ("bk3_05.dialog.txt", existing), ("bk3_00.keep.tga", preserved)])
+            (replacements / "dialog.txt").write_bytes(translated)
+            record = {"archive": "bk3_05", "name": "dialog.txt", "file": "dialog.txt",
+                      "effective_sha256": hashlib.sha256(chinese).hexdigest(),
+                      "replacement_sha256": hashlib.sha256(translated).hexdigest()}
+            manifest = root / "manifest.json"
+            manifest.write_text(json.dumps({"schema": 1, "replacements": [record]}))
+            output = root / "merged.pp"
+            report = supplement_patch(data, replacements, manifest, output)
+            self.assertEqual(report["replacements"], 1)
+            with output.open("rb") as stream:
+                result = {}
+                for name, offset, size in legacy_entries(output):
+                    stream.seek(offset)
+                    result[name] = bytes((-v) & 255 for v in stream.read(size))
+            self.assertEqual(result["patch.cfg"], config)
+            self.assertEqual(result["bk3_00.keep.tga"], preserved)
+            self.assertEqual(apply_resource_patch(original, result["bk3_05.dialog.txt"]), translated)
+            record["effective_sha256"] = "0" * 64
+            manifest.write_text(json.dumps({"schema": 1, "replacements": [record]}))
+            with self.assertRaisesRegex(ValueError, "source hash"):
+                supplement_patch(data, replacements, manifest, root / "rejected.pp")
+            inventory = build_inventory(data, root / "inventory.json")
+            self.assertEqual(len(inventory["archives"]), 2)
+            self.assertFalse(inventory["complete_localization"])
+
+    def test_patch_audit_checks_legacy_base_and_loose_font(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = b"BKPT\x02\0\0\0\x03\0\0\0"
+            write_legacy_archive(root / "bk3_05.pp", [("test.txt", b"original")])
+            (root / "Type_G.FTT").write_bytes(b"font-base")
+            write_legacy_archive(root / "patch.pp", [
+                ("patch.cfg", config),
+                ("bk3_05.test.txt", encode_resource_patch(b"original", b"Chinese")),
+                ("fonts.type_g.ftt", encode_resource_patch(b"font-base", b"new-font")),
+            ])
+            report = audit_existing_patch(root, root / "report.json")
+            self.assertEqual(len(report["records"]), 2)
+            self.assertTrue(all(r["format_validated"] for r in report["records"]))
+            self.assertFalse(report["runtime_verified"])
+            (root / "Type_G.FTT").write_bytes(b"different-length-font")
+            with self.assertRaisesRegex(ValueError, "base identity"):
+                audit_existing_patch(root, root / "invalid.json")
+
+    def test_resource_patch_roundtrip_and_wrong_base_rejected(self):
+        for replacement in (b"short", b"long translated resource" * 10):
+            patch = encode_resource_patch(b"original", replacement)
+            self.assertEqual(apply_resource_patch(b"original", patch), replacement)
+            with self.assertRaises(ValueError):
+                apply_resource_patch(b"wrong base size", patch)
+            with self.assertRaises(ValueError):
+                apply_resource_patch(b"original", patch + b"trailing")
+
+    def test_legacy_writer_roundtrip_and_no_overwrite(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "patch.pp"
+            entries = [("patch.cfg", b"BKPT\0"), ("bk3_00.test.tga", bytes(range(256)))]
+            write_legacy_archive(path, entries)
+            with path.open("rb") as stream:
+                for expected, (name, offset, size) in zip(entries, legacy_entries(path)):
+                    stream.seek(offset)
+                    self.assertEqual((name, bytes((-v) & 255 for v in stream.read(size))), expected)
+            with self.assertRaises(ValueError):
+                write_legacy_archive(path, entries)
+
     def test_decode_tbl_rejects_bad_header(self):
         with self.assertRaises(ValueError):
             decode_tbl(b"\0" * 32)

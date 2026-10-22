@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "scope": "Translate remaining Japanese only; preserve other languages and existing Chinese",
+  "runtime_verified": false,
+  "entries": [
+    {"archive":"bk3_00","names":["al_11.tga","al_12.tga"],"source":"スライドショー","translation":"幻灯片播放","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["lo_14.tga"],"source":"ロードしますか？","translation":"是否读取存档？","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["ma_08.bmp"],"source":"もう一度やりますか？","translation":"是否再试一次？","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["ma_09.bmp"],"source":"セーブをしますか？","translation":"是否保存？","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["hs_11.tga","hs_12.tga"],"source":"アングル変更","translation":"切换视角","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["hs_21.tga","hs_22.tga","hs_23.tga"],"source":"オートループ","translation":"自动循环","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["hs_28.tga","hs_29.tga"],"source":"ポイント変更","translation":"切换位置","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["hs_30.tga","hs_31.tga"],"source":"オート","translation":"自动","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["hs_32.tga","hs_33.tga"],"source":"リセット","translation":"重置","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["hs_34.tga","hs_35.tga"],"source":"アクセサリー1","translation":"饰品1","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["hs_36.tga","hs_37.tga"],"source":"アクセサリー2","translation":"饰品2","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["hs_38.tga","hs_39.tga"],"source":"男表示","translation":"显示男性","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["hs_40.tga","hs_41.tga"],"source":"背景表示","translation":"显示背景","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["hs_42.tga","hs_43.tga"],"source":"物品","translation":"物品","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["hs_44.tga","hs_45.tga"],"source":"タイトルへ戻る","translation":"返回标题","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["hs_46.tga","hs_47.tga"],"source":"ゲーム終了","translation":"退出游戏","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["ih_01.tga","ih_02.tga"],"source":"立ち去る","translation":"离开","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["al_13.tga","al_14.tga"],"source":"削除","translation":"删除","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["al_31.tga"],"source":"※ご注意※\nゲームをインストールしているドライブに充分な空き容量がない場合、\nアルバムを実行できない場合があります。","translation":"注意\n游戏所在磁盘空间不足时，\n相册功能可能无法使用。","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["ex_23.tga","ex_24.tga"],"source":"未体験","translation":"未体验","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["ex_25.tga","ex_26.tga","ex_27.tga","ex_28.tga","ex_29.tga"],"source":"リアルタイムイベント","translation":"即时演出","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["sa_14.tga"],"source":"セーブしますか？","translation":"是否保存？","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["sy_11.tga"],"source":"タイトルへ戻りますか？","translation":"返回标题画面？","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["sy_12.tga"],"source":"ゲームを終了しますか？","translation":"是否退出游戏？","status":"translation_reviewed_texture_pending"},
+    {"archive":"bk3_00","names":["op_00.bmp"],"source":"リアルタイム追跡アクションゲーム","translation":"即时追踪动作游戏","status":"translation_reviewed_texture_pending"}
+  ],
+  "remaining_audits": ["Remaining UI textures", "World textures", "Executable text", "Scenario source comparison", "Movie subtitles", "Runtime rendering and upgrade installation"]
+}

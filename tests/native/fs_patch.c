@@ -27,6 +27,16 @@ int main(int argc, char **argv) {
     assert(!op_open(&reent, &fd, root, 0, 0));
     assert(op_read(&reent, &fd, content, 4) == 4 && !memcmp(content, "ROOT", 4));
     assert(!op_close(&reent, &fd));
+    assert(!setenv("BIKO3_LOCALIZATION_PATCH", data, 1));
+    assert(!strcmp(read_patch_path(root, buffer), data));
+    assert(!op_open(&reent, &fd, root, 0, 0));
+    assert(op_read(&reent, &fd, content, 4) == 4 && !memcmp(content, "DATA", 4));
+    assert(!op_close(&reent, &fd));
+    assert(!op_open(&reent, &fd, root, 1, 0));
+    assert(!op_close(&reent, &fd));
+    assert(!setenv("BIKO3_LOCALIZATION_PATCH", other, 1));
+    assert(!strcmp(read_patch_path(root, buffer), root));
+    assert(!unsetenv("BIKO3_LOCALIZATION_PATCH"));
     puts("FS_PATCH_ALL_PASSED");
     return 0;
 }

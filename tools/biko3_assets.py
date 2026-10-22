@@ -64,15 +64,18 @@ def extract_tbl_tree(data: Path, out: Path) -> list[Path]:
 def build_inventory(data: Path, out: Path) -> dict:
     """Write a small, source-free index of archive records for localization."""
     archives = []
-    for tbl in sorted(data.glob("*.tbl")):
-        pp = data / (tbl.stem + ".pp")
-        if not pp.is_file():
-            continue
-        decoded = decode_tbl(tbl.read_bytes())
+    for pp in sorted(data.glob("*.pp")):
+        tbl = pp.with_suffix(".tbl")
+        decoded = decode_tbl(tbl.read_bytes()) if tbl.is_file() else None
         rows = [{"name": n, "offset": o, "size": s}
-                for n, o, s in index_entries(decoded, pp.stat().st_size)]
-        archives.append({"archive": pp.name, "index": tbl.name, "entries": rows})
-    result = {"schema": 1, "format": "biko3-localization-inventory-v1", "archives": archives}
+                for n, o, s in (index_entries(decoded, pp.stat().st_size)
+                                 if decoded is not None else legacy_entries(pp))]
+        archives.append({"archive": pp.name, "index": tbl.name if decoded is not None else None,
+                         "payload_negated": decoded is None, "entries": rows})
+    loose = [{"name": path.name, "size": path.stat().st_size, "review": "pending"}
+             for path in sorted(data.iterdir()) if path.is_file() and path.suffix.lower() not in (".pp", ".tbl")]
+    result = {"schema": 1, "format": "biko3-localization-inventory-v1", "archives": archives,
+              "loose_files": loose, "complete_localization": False}
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return result
@@ -211,14 +214,229 @@ def export_scenarios(data: Path, out: Path) -> dict:
     (out / "manifest.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     return report
 
+def apply_resource_patch(original: bytes, packed: bytes) -> bytes:
+    """Apply the original BKPT v2 replacement/range format (5ce9f0)."""
+    import zlib
+    if len(packed) < 5:
+        raise ValueError("truncated patch stream")
+    declared = struct.unpack_from("<I", packed)[0]
+    if not 12 <= declared <= 0x10000000:
+        raise ValueError("invalid patch output limit")
+    decoder = zlib.decompressobj()
+    decoded = decoder.decompress(packed[4:], declared + 1)
+    if (not decoder.eof or decoder.unused_data or decoder.unconsumed_tail
+            or len(decoded) != declared):
+        raise ValueError("invalid patch compression")
+    old_size, new_size, count = struct.unpack_from("<III", decoded)
+    if old_size != len(original) or not new_size or not count:
+        raise ValueError("patch base identity/size mismatch")
+    position = 12
+    spans = []
+    for _ in range(count):
+        if position + 8 > len(decoded):
+            raise ValueError("truncated patch record")
+        start, size = struct.unpack_from("<II", decoded, position)
+        position += 8
+        if start + size > new_size or position + size > len(decoded):
+            raise ValueError("patch record outside output")
+        spans.append((start, decoded[position:position + size]))
+        position += size
+    if position != len(decoded):
+        raise ValueError("trailing patch data")
+    if new_size != old_size and (count != 1 or spans[0][0] != 0 or len(spans[0][1]) != new_size):
+        raise ValueError("resized patch must replace the complete resource")
+    result = bytearray(original if new_size == old_size else bytes(new_size))
+    for start, payload in spans:
+        result[start:start + len(payload)] = payload
+    return bytes(result)
+
+def encode_resource_patch(original: bytes, replacement: bytes) -> bytes:
+    """Build a BKPT v2 full replacement accepted by the original loader."""
+    import zlib
+    if not replacement or len(replacement) > 0x10000000 - 20:
+        raise ValueError("replacement resource is empty or too large")
+    decoded = struct.pack("<5I", len(original), len(replacement), 1, 0, len(replacement)) + replacement
+    packed = struct.pack("<I", len(decoded)) + zlib.compress(decoded)
+    if apply_resource_patch(original, packed) != replacement:
+        raise ValueError("replacement failed round-trip validation")
+    return packed
+
+def audit_existing_patch(data: Path, output: Path) -> dict:
+    """Apply every existing patch against its actual base without changing Data."""
+    import hashlib
+    archive_cache = {}
+    records = []
+    loose = {p.name.lower(): p for p in data.iterdir() if p.is_file()}
+    patch = data / "patch.pp"
+    with patch.open("rb") as stream:
+        for key, offset, size in legacy_entries(patch):
+            stream.seek(offset)
+            packed = bytes((-v) & 255 for v in stream.read(size))
+            if key == "patch.cfg":
+                if packed != b"BKPT\x02\0\0\0\x03\0\0\0":
+                    raise ValueError("unknown existing patch configuration")
+                continue
+            namespace, name = key.split(".", 1)
+            if namespace == "fonts":
+                original = loose[name.lower()].read_bytes()
+            else:
+                archive = data / (namespace + ".pp")
+                tbl = archive.with_suffix(".tbl")
+                if namespace not in archive_cache:
+                    rows = (index_entries(decode_tbl(tbl.read_bytes()), archive.stat().st_size)
+                            if tbl.is_file() else legacy_entries(archive))
+                    archive_cache[namespace] = {n.lower(): (o, s) for n, o, s in rows}
+                base_offset, base_size = archive_cache[namespace][name.lower()]
+                with archive.open("rb") as base:
+                    base.seek(base_offset)
+                    original = base.read(base_size)
+                if not tbl.is_file():
+                    original = bytes((-v) & 255 for v in original)
+            effective = apply_resource_patch(original, packed)
+            records.append({"key": key, "base_bytes": len(original), "effective_bytes": len(effective),
+                            "base_sha256": hashlib.sha256(original).hexdigest(),
+                            "effective_sha256": hashlib.sha256(effective).hexdigest(),
+                            "format_validated": True, "language_review": "pending"})
+    result = {"schema": 1, "patch_sha256": hashlib.sha256(patch.read_bytes()).hexdigest(),
+              "records": records, "runtime_verified": False,
+              "scope": "Patch format and base matching only; not Japanese coverage proof"}
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    return result
+
+def write_legacy_archive(destination: Path, entries: list[tuple[str, bytes]]) -> None:
+    """Write a fresh legacy PP, preserving supplied entry order and payloads."""
+    if len(entries) > 100000 or destination.exists():
+        raise ValueError("archive destination must be fresh and count within engine limit")
+    encoded_names = []
+    seen = set()
+    for name, payload in entries:
+        encoded = name.encode("cp932")
+        if (not encoded or len(encoded) >= 32 or b"\0" in encoded or "/" in name or "\\" in name
+                or name in (".", "..") or name.lower() in seen or len(payload) > 0x10000000):
+            raise ValueError("invalid legacy archive entry")
+        seen.add(name.lower())
+        encoded_names.append(encoded.ljust(32, b"\0"))
+    total = sum(len(payload) for _, payload in entries)
+    if total + 8 + 36 * len(entries) >= 0x100000000:
+        raise ValueError("legacy archive exceeds 32-bit engine extent")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with destination.open("xb") as stream:
+        stream.write(struct.pack("<II", len(entries), total))
+        for name in encoded_names:
+            stream.write(bytes((-v) & 255 for v in name))
+        for _, payload in entries:
+            stream.write(struct.pack("<I", len(payload)))
+        for _, payload in entries:
+            stream.write(bytes((-v) & 255 for v in payload))
+    legacy_entries(destination)
+
+def supplement_patch(data: Path, replacement_directory: Path, manifest_path: Path, destination: Path) -> dict:
+    """Merge reviewed Japanese replacements into the existing patch unchanged elsewhere.
+
+    The manifest binds each replacement to its original archive resource and to
+    both the effective (already translated) source and the new payload SHA256.
+    """
+    import hashlib
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if not isinstance(manifest, dict):
+        raise ValueError("replacement manifest must be an object")
+    records = manifest.get("replacements")
+    if manifest.get("schema") != 1 or not isinstance(records, list) or not records:
+        raise ValueError("replacement manifest must contain reviewed replacements")
+    patch = data / "patch.pp"
+    old_entries = []
+    with patch.open("rb") as stream:
+        for name, offset, size in legacy_entries(patch):
+            stream.seek(offset)
+            old_entries.append((name, bytes((-v) & 255 for v in stream.read(size))))
+    old = dict(old_entries)
+    if old.get("patch.cfg") != b"BKPT\x02\0\0\0\x03\0\0\0":
+        raise ValueError("requires the reviewed original BKPT v2 Chinese patch")
+    updates = {}
+    for record in records:
+        namespace, name = record["archive"], record["name"]
+        if (not namespace.startswith("bk3_") or len(namespace) != 6
+                or not namespace[4:].isdigit() or Path(name).name != name or "\\" in name):
+            raise ValueError("invalid replacement resource identity")
+        key = namespace + "." + name
+        if key in updates:
+            raise ValueError("duplicate replacement resource")
+        archive = data / (namespace + ".pp")
+        tbl = archive.with_suffix(".tbl")
+        rows = (index_entries(decode_tbl(tbl.read_bytes()), archive.stat().st_size)
+                if tbl.exists() else legacy_entries(archive))
+        row = next((r for r in rows if r[0] == name), None)
+        if row is None:
+            raise ValueError("replacement resource absent from archive")
+        with archive.open("rb") as stream:
+            stream.seek(row[1]); original = stream.read(row[2])
+        if not tbl.exists():
+            original = bytes((-v) & 255 for v in original)
+        effective = apply_resource_patch(original, old[key]) if key in old else original
+        if hashlib.sha256(effective).hexdigest() != record["effective_sha256"]:
+            raise ValueError("effective source hash mismatch")
+        relative = Path(record["file"])
+        source = (replacement_directory / relative).resolve()
+        if relative.is_absolute() or not source.is_relative_to(replacement_directory.resolve()):
+            raise ValueError("replacement file outside reviewed directory")
+        replacement = source.read_bytes()
+        if hashlib.sha256(replacement).hexdigest() != record["replacement_sha256"]:
+            raise ValueError("replacement hash mismatch")
+        updates[key] = encode_resource_patch(original, replacement)
+    merged = [(name, updates.get(name, payload)) for name, payload in old_entries]
+    merged.extend((name, payload) for name, payload in updates.items() if name not in old)
+    write_legacy_archive(destination, merged)
+    return {"schema": 1, "replacements": len(updates), "entries": len(merged),
+            "sha256": hashlib.sha256(destination.read_bytes()).hexdigest(),
+            "runtime_verified": False}
+
+def export_effective_ui(data: Path, out: Path) -> dict:
+    """Export the UI archive after applying existing patches, for Japanese audit."""
+    import hashlib
+    archive = data / "bk3_00.pp"
+    rows = index_entries(decode_tbl(archive.with_suffix(".tbl").read_bytes()), archive.stat().st_size)
+    patch_archive = data / "patch.pp"
+    patches = {name: (offset, size) for name, offset, size in legacy_entries(patch_archive)}
+    out.mkdir(parents=True, exist_ok=False)
+    records = []
+    with archive.open("rb") as source, patch_archive.open("rb") as patch:
+        for name, offset, size in rows:
+            source.seek(offset)
+            payload = source.read(size)
+            original_hash = hashlib.sha256(payload).hexdigest()
+            key = "bk3_00." + name
+            if key in patches:
+                poffset, psize = patches[key]
+                patch.seek(poffset)
+                packed = bytes((-v) & 255 for v in patch.read(psize))
+                payload = apply_resource_patch(payload, packed)
+            (out / name).write_bytes(payload)
+            records.append({"name": name, "base_sha256": original_hash,
+                            "effective_sha256": hashlib.sha256(payload).hexdigest(),
+                            "existing_patch_applied": key in patches,
+                            "japanese_review": "pending"})
+    report = {"schema": 1, "archive": archive.name, "records": records,
+              "scope": "UI archive only; world textures and executable remain to audit"}
+    (out / "manifest.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    return report
+
 if __name__ == "__main__":
     import argparse
     p=argparse.ArgumentParser(); p.add_argument("data", type=Path); p.add_argument("out", type=Path)
     p.add_argument("--inventory", action="store_true")
     p.add_argument("--extract-entries", action="store_true")
     p.add_argument("--export-scenarios", action="store_true")
+    p.add_argument("--effective-ui", action="store_true")
+    p.add_argument("--audit-patch", action="store_true")
     args=p.parse_args()
-    if args.export_scenarios:
+    if args.audit_patch:
+        result = audit_existing_patch(args.data, args.out)
+        print(json.dumps({"validated_patch_records": len(result["records"]), "runtime_verified": False}))
+    elif args.effective_ui:
+        result = export_effective_ui(args.data, args.out)
+        print(json.dumps({"resources": len(result["records"]), "patched": sum(r["existing_patch_applied"] for r in result["records"])}))
+    elif args.export_scenarios:
         result = export_scenarios(args.data, args.out)
         print(json.dumps({"scenarios": len(result["scenarios"]),
                           "characters": sum(r["characters"] for r in result["scenarios"])}))

@@ -2,10 +2,12 @@
 
 在 iPhone 上游玩《尾行 3》，支持横屏、屏幕虚拟手柄和实体手柄。
 
+当前正式版为 **[v0.1.1](https://github.com/hyc1743/biko3-ios/releases/tag/v0.1.1)**，已启用资源中现成的中文补丁。已有 dev.3 资源的玩家只需覆盖安装新版 IPA，无需重新下载或复制资源。
+
 ## 准备
 
 - 安装 iOS 26 或更新版本的 iPhone。
-- 从 [Releases](https://github.com/hyc1743/biko3-ios/releases) 下载新版 `Biko3-development.ipa`，使用自己的签名与侧载工具安装。IPA 未签名，项目不提供签名证书。
+- 从 [v0.1.1 正式版](https://github.com/hyc1743/biko3-ios/releases/tag/v0.1.1) 的 Assets 下载 `Biko3-development.ipa`，使用自己的签名与侧载工具安装。文件名仍保留 `development`，该 Release 为正式发布。IPA 未签名，项目不提供签名证书。
 - 从 [dev.3 下载页](https://github.com/hyc1743/biko3-ios/releases/tag/v0.1.0-dev.3) 下载下面列出的六个游戏资源分卷。资源单独提供，IPA 本身不包含 Data。
 - 手机需要容纳约 3 GB 的分卷和约 3 GB 的展开数据，首次导入时请预留足够空间。
 
@@ -46,7 +48,13 @@
 - 中断后重开：已完成且校验正确的文件会保留，未完成文件重新展开。
 - 导入完成：自动进入游戏。确认可以游玩后，可删除手机里的六个分卷，释放约 3 GB 空间；保留 `game/Data`。
 
-也可直接复制自己已有的完整 Data，目录结构必须是 `Biko3/game/Data`，避免多嵌套一层 `Data/Data`。dev.2 起支持分卷导入；新图标与下述手柄布局从 dev.3 起提供。自行打包和 SHA-256 校验方法见[资源分卷指南](docs/resource-packs.md)。
+也可直接复制自己已有的完整 Data，目录结构必须是 `Biko3/game/Data`，避免多嵌套一层 `Data/Data`。自行打包和 SHA-256 校验方法见[资源分卷指南](docs/resource-packs.md)。
+
+## 中文补丁
+
+v0.1.1 自动读取现有资源中的 `game/Data/patch.pp`，无需单独下载汉化补丁或移动文件。使用自己已有的 Data 时，请确认其中包含原补丁；缺少补丁时仍显示原文。
+
+本项目原样套用已有汉化，保留原汉化组署名，不额外翻译或修改贴图。补丁包含简体中文剧情，部分菜单使用繁体字，未覆盖的日文和英文保持原样。已在 macOS 运行中确认补丁加载及菜单中文显示；本版 iPhone 显示和完整剧情仍需实际游玩验证。
 
 ## 操作
 
@@ -81,13 +89,21 @@
 | `log.txt` | 本次启动与运行日志 |
 | `log.prev.txt` | 上一次运行日志 |
 
-更新时用相同应用标识覆盖安装，先备份 `saves`，避免通过卸载应用来更新而丢失本地数据。
+更新到 v0.1.1：
+
+1. 先导出备份 `saves` 文件夹。
+2. 下载新版 IPA，使用与旧版相同的签名账号和应用标识覆盖安装；不要先卸载旧版。
+3. 打开游戏，继续使用已有的 `game/Data` 和存档。已导入 dev.3 资源的玩家无需重传六个分卷。
+
+若侧载工具提示签名或应用标识不匹配，请先保留备份，再检查签名设置。快存与快读功能未包含在 v0.1.1 中。
 
 遇到闪退、黑屏、无声或操作异常，可在 [Issues](https://github.com/hyc1743/biko3-ios/issues) 提供 iPhone 型号、iOS 版本、应用版本、复现步骤，以及 `log.txt` 和 `log.prev.txt`。画面问题可附截图或录屏。只保留上一轮日志，出问题后请尽快导出，避免连续重启覆盖。日志保存在本机，不会自动上传。
 
 ## 参考项目与致谢
 
 感谢以下项目及其贡献者：
+
+- 原中文补丁作者及汉化组：本版直接使用资源中已有的剧本、字体与图片补丁，保留补丁中的原始署名。
 
 - [seedds/nxnative](https://github.com/seedds/nxnative)：本项目使用的原生宿主、指令改写工具、平台服务及触控／手柄前端的基础。
 - [jhaizhou-ops/d2r-mobile](https://github.com/jhaizhou-ops/d2r-mobile)：参考其将原有游戏适配到 iOS 的实现与使用体验设计。

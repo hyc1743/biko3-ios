@@ -79,9 +79,9 @@ static const char *mapped(const char *path, char out[PATH_MAX]) {
     if (count < 0 || count >= PATH_MAX) { errno = ENAMETOOLONG; return NULL; }
     return out;
 }
-/* The original main looks for game/patch.pp, but the distributed Data tree
- * contains Data/patch.pp. Keep an explicitly installed root patch preferred.
- * This fallback is used only for stat and read-only open, never for writes. */
+/* The original main looks for game/patch.pp. A reviewed patch bundled with
+ * the app takes priority, followed by the explicit root patch and Data patch.
+ * This lookup is used only for stat and read-only open, never for writes. */
 static const char *read_patch_path(const char *path, char out[PATH_MAX]) {
     const char *root = getenv("BIKO3_GAME_ROOT");
     if (!root || !*root) return path;
@@ -89,6 +89,13 @@ static const char *read_patch_path(const char *path, char out[PATH_MAX]) {
     int count = snprintf(expected, sizeof expected, "%s/patch.pp", root);
     if (count < 0 || count >= PATH_MAX || strcmp(path, expected)) return path;
     struct stat info;
+    /* Optional merged localization patch lives in the signed application
+     * bundle. Updating the app replaces it without changing Documents/Data. */
+    const char *bundled = getenv("BIKO3_LOCALIZATION_PATCH");
+    if (bundled && *bundled && !stat(bundled, &info) && S_ISREG(info.st_mode)) {
+        count = snprintf(out, PATH_MAX, "%s", bundled);
+        if (count >= 0 && count < PATH_MAX) return out;
+    }
     if (!stat(path, &info) || errno != ENOENT) return path;
     count = snprintf(out, PATH_MAX, "%s/Data/patch.pp", root);
     if (count < 0 || count >= PATH_MAX) return path;
@@ -107,7 +114,7 @@ static int op_open(void *r, void *file, const char *path, int flags, int mode) {
     if (flags & 0x800) host_flags |= O_EXCL;
     int fd = open(p, host_flags, mode);
     if (fd < 0) return fail(r);
-    if (p == patch_buf) fprintf(stderr, "[biko3] reading bundled Data/patch.pp\n");
+    if (p == patch_buf) fprintf(stderr, "[biko3] reading localization patch: %s\n", p);
     *(int *)file = fd; return 0;
 }
 static int op_close(void *r, void *file) { return close(*(int *)file) ? fail(r) : 0; }

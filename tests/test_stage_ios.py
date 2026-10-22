@@ -1,13 +1,42 @@
 import sys
 import re
 import unittest
+import tempfile
+import hashlib
+import json
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-from stage_ios import binding_header, replace_once, gamepad
+from stage_ios import binding_header, replace_once, gamepad, stage_localization
+from biko3_assets import write_legacy_archive
 
 
 class StageTests(unittest.TestCase):
+    def test_bundled_localization_requires_review_and_exact_digest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "source"
+            source.mkdir()
+            target = Path(tmp) / "bundle"
+            self.assertEqual(stage_localization(source, target), {"included": False})
+            patch = source / "patch.pp"
+            write_legacy_archive(patch, [("patch.cfg", b"BKPT\x02\0\0\0\x03\0\0\0")])
+            with self.assertRaises(ValueError):
+                stage_localization(source, target)
+            spec = {"schema": 1, "file": "patch.pp", "bytes": patch.stat().st_size,
+                    "sha256": hashlib.sha256(patch.read_bytes()).hexdigest(), "reviewed": False,
+                    "base_patch_sha256": "5aa69af72f240d6cf2fa1d12293564256bef120b1c1a70cb210e597927df9f42"}
+            manifest = source / "bundle.json"
+            manifest.write_text(json.dumps(spec))
+            with self.assertRaises(ValueError):
+                stage_localization(source, target)
+            spec["reviewed"] = True
+            manifest.write_text(json.dumps(spec))
+            self.assertTrue(stage_localization(source, target)["included"])
+            self.assertEqual((target / "patch.pp").read_bytes(), patch.read_bytes())
+            patch.write_bytes(patch.read_bytes() + b"corrupt")
+            with self.assertRaises(ValueError):
+                stage_localization(source, Path(tmp) / "second")
+
     def test_touch_and_physical_buttons_agree_on_biko3_positions(self):
         original = '''switch (b) { case B_A: return CGPointMake(c.x + g, c.y); case B_B: return CGPointMake(c.x, c.y + g); case B_X: return CGPointMake(c.x, c.y - g); default: return CGPointMake(c.x - g, c.y); }
 K(g.buttonB, B_A); K(g.buttonA, B_B); K(g.buttonY, B_X); K(g.buttonX, B_Y);   // by position: right A, bottom B, top X, left Y'''

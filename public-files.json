@@ -84,6 +84,7 @@
   "tools/mac_gameplay_probe.py",
   "tools/biko3_assets.py",
   "docs/localization.md",
+  "ios/localization/ja-zh-CN.json",
   "tests/test_biko3_assets.py",
   "tests/test_fs_patch.py",
   "tests/native/fs_patch.c",

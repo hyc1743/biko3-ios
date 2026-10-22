@@ -173,6 +173,15 @@ def probe(args):
         env.update(DM_WINDOW="1", BIKO3_MAC_SMOKE_EXIT="1", BIKO3_PROBE_TRACE="1", BIKO3_FS_TRACE="1", DM_KEYS=args.keys,
                    BIKO3_GAME_ROOT=str(game), BIKO3_SAVE_ROOT=str(saves), BIKO3_CAPTURE_ROOT=str(captures),
                    DM_ROMFS=str(game), DM_SAVE=str(saves), DM_TEMP=str(private), DM_AUDIO="1", DM_SVC="1")
+        localization = stage.get("localization_patch", {})
+        if localization.get("included"):
+            bundled_patch = staged / "ios/Gen/dm/localization/patch.pp"
+            if (not bundled_patch.is_file() or bundled_patch.is_symlink()
+                    or bundled_patch.stat().st_size != localization.get("bytes")
+                    or digest(bundled_patch) != localization.get("sha256")):
+                raise ValueError("Staged localization patch identity mismatch")
+            env["BIKO3_LOCALIZATION_PATCH"] = str(bundled_patch)
+        report["localization_patch"] = localization
         report.update(compiled=True, guest_sha256=stage["guest_sha256"], patched_sha256=stage["patched_sha256"],
                       host_sha256=digest(host / "dmhost"), keys=args.keys)
         run_log = evidence / "run.log"
@@ -198,6 +207,9 @@ def probe(args):
                       controlled_termination=deadline_reached, screenshots=shots,
                       observed_run_seconds=round(time.monotonic() - running_since, 3),
                       **observations(run_log.read_text(encoding="utf-8", errors="replace")))
+        report["bundled_localization_read_observed"] = bool(localization.get("included") and
+            ("[biko3] reading localization patch: " + env["BIKO3_LOCALIZATION_PATCH"])
+            in run_log.read_text(encoding="utf-8", errors="replace"))
         if not deadline_reached and process.returncode:
             log_text = run_log.read_text(encoding="utf-8", errors="replace")
             if "failed to create the MTLResidencySet" in log_text:
