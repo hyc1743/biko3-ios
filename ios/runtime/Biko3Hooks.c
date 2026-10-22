@@ -6,6 +6,7 @@
 #include <string.h>
 #include "Biko3Libnx.h"
 #include "Biko3Vulkan.h"
+#include "Biko3GameProbe.h"
 #include "Biko3HookTable.h"
 
 void *front_metal_layer(void);
@@ -18,6 +19,7 @@ void biko3_bind_guest_hooks(uint8_t *base, size_t size) {
         abort();
     }
     biko3_vk_set_metal_layer(front_metal_layer());
+    biko3_game_probe_bind(base, size, BIKO3_GAME_PROBE_ORIGINAL_OFFSET);
     uintptr_t *table = (uintptr_t *)(base + BIKO3_TABLE_OFFSET);
     memset(table, 0, BIKO3_TABLE_SIZE);
     for (size_t i = 0; i < BIKO3_HOOK_COUNT; ++i) {

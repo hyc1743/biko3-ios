@@ -3,6 +3,7 @@
 #include "Biko3Libnx.h"
 #include "Biko3FS.h"
 #include "Biko3Audio.h"
+#include "Biko3GameProbe.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,6 +60,7 @@ void *biko3_libnx_resolve(const char *name) {
     if (!strcmp(name, "biko3_platform_destroy")) return (void *)biko3_platform_destroy;
     if (!strcmp(name, "biko3_find_device")) return (void *)biko3_find_device;
     if (!strcmp(name, "biko3_platform_error")) return (void *)biko3_platform_error;
+    if (!strcmp(name, "biko3_game_probe_tick")) return (void *)biko3_game_probe_tick;
     return biko3_audio_resolve(name);
 }
 

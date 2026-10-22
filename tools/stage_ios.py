@@ -41,12 +41,15 @@ def binding_header(hooks, build_id):
         slots.add(slot)
         rows.append("    {" + json.dumps(symbol) + ", " + str(slot) + "},")
     build = ",".join("0x" + build_id[i:i+2] for i in range(0, 64, 2))
+    original = next((hook["original_trampoline_offset"] for hook in hooks["hooks"]
+                     if hook["symbol"] == "biko3_game_probe_tick"), 0)
     return "\n".join([
         "/* Generated from verified offline hooks; do not edit. */", "#pragma once",
         "typedef struct { const char *symbol; unsigned slot; } Biko3HookBinding;",
         f"#define BIKO3_TABLE_OFFSET {hooks['table_offset']:#x}",
         f"#define BIKO3_TABLE_SIZE {hooks['table_size']:#x}",
         f"#define BIKO3_HOOK_COUNT {len(rows)}",
+        f"#define BIKO3_GAME_PROBE_ORIGINAL_OFFSET {original:#x}",
         f"static const unsigned char biko3_expected_build[32] = {{{build}}};",
         "static const Biko3HookBinding biko3_hook_bindings[] = {", *rows, "};", ""])
 
@@ -185,6 +188,11 @@ def stage(args):
         if spec["source_nro_sha256"] != image.sha256:
             raise ValueError("Hook profile is bound to a different guest")
         merged.extend(spec["hooks"])
+    if args.quicksave_probe:
+        spec = json.loads((ROOT / "ios/runtime/quicksave-probe-hooks.json").read_text(encoding="utf8"))
+        if spec["source_nro_sha256"] != image.sha256:
+            raise ValueError("Probe hooks are bound to a different guest")
+        merged.extend(spec["hooks"])
     combined = out / "guest-hooks.json"
     combined.write_text(json.dumps({"source_nro_sha256": image.sha256, "hooks": merged}, indent=2), encoding="utf8")
     patch_hooks(["--nro", str(original), "--rewritten", str(rewritten / "rewritten/main.patched.bin"),
@@ -234,6 +242,7 @@ def stage(args):
     report = {"guest_sha256": image.sha256, "guest_embedded": True, "source_commit": COMMIT,
               "project": "ios/project.yml", "host_root": "work/nxnative-staged/dm/host",
               "patched_dir": "rewritten-bindings", "hook_count": len(hooks["hooks"]),
+              "quicksave_probe_enabled": args.quicksave_probe,
               "patched_sha256": sha(hooked / "main.patched.bin"),
               "assembly_sha256": sha(gen / "embed.S"), "project_sources_generated": not args.prepare_only,
               "compiled": False, "runtime_verified": False}
@@ -247,6 +256,7 @@ def main(argv=None):
     parser.add_argument("--nro", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--prepare-only", action="store_true", help="Generate guest/source inputs without macOS make or Xcode")
+    parser.add_argument("--quicksave-probe", action="store_true", help="Research-only original game tick observation")
     stage(parser.parse_args(argv))
 
 

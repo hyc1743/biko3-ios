@@ -14,6 +14,19 @@ from test_nro import sample
 
 
 class VulkanPatchTests(unittest.TestCase):
+    def test_chained_original_preserves_prologue_and_returns_after_patch(self):
+        prologue = bytes.fromhex("fd7bb5a9")
+        code = hooks.original_entry(0x1000000, 0x9bc60, prologue)
+        self.assertEqual(code[:4], prologue)
+        word = struct.unpack("<I", code[4:])[0]
+        immediate = word & 0x3ffffff
+        if immediate & (1 << 25):
+            immediate -= 1 << 26
+        self.assertEqual(0x1000004 + immediate * 4, 0x9bc64)
+        for unsafe in (hooks.branch(0x80, 0x100), bytes.fromhex("00000090"), b"bad", bytes(4)):
+            with self.subTest(unsafe=unsafe), self.assertRaises(NroError):
+                hooks.original_entry(0x1000000, 0x9bc60, unsafe)
+
     def test_unmapped_wrapper_entry_including_error_cleanup_is_rejected(self):
         data = bytearray(0x200)
         data[0x80:0x84] = hooks.branch(0x80, 0x100)

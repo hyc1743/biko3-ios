@@ -31,6 +31,30 @@ def stub(pc, slot):
     ldr = 0xf9400210 | (((address & 0xfff) >> 3) << 10)
     return struct.pack("<III", adrp, ldr, 0xd61f0200)
 
+
+def original_entry(pc, address, instruction):
+    """Preserve one audited entry instruction and its original control flow."""
+    if len(instruction) != 4:
+        raise NroError("original entry must contain one instruction")
+    word = struct.unpack("<I", instruction)[0]
+    # STP FP/LR, register MOV and immediate CMP do not depend on their PC.
+    independent = (word & 0xFFC07FFF == 0xA9807BFD or
+                   word & 0xFFE0FFE0 in (0xAA0003E0, 0x2A0003E0) or
+                   word & 0xFF00001F in (0xF100001F, 0x7100001F))
+    if independent:
+        return instruction + branch(pc + 4, address + 4)
+    # A CBZ/CBNZ target can be outside its +/-1MiB reach from the appended stub.
+    # Invert the test to skip one unconditional branch; neither changes NZCV.
+    if word & 0x7E000000 == 0x34000000:
+        immediate = (word >> 5) & 0x7FFFF
+        if immediate & (1 << 18):
+            immediate -= 1 << 19
+        target = address + immediate * 4
+        inverted = ((word ^ 0x01000000) & ~(0x7FFFF << 5)) | (2 << 5)
+        return (struct.pack("<I", inverted) + branch(pc + 4, target) +
+                branch(pc + 8, address + 4))
+    raise NroError("chained hook has an unsupported entry instruction")
+
 def apply_hooks(source, rewritten, boundaries, hooks, guard=True):
     image = Nro(source)
     if image.sha256 != SOURCE_SHA: raise NroError("unsupported source NRO SHA256")
@@ -58,7 +82,13 @@ def apply_hooks(source, rewritten, boundaries, hooks, guard=True):
         output.extend(stub(pc, slot))
         before = rewritten[address:address+4].hex()
         output[address:address+4] = branch(address, pc)
-        records.append(dict(hook, offset=address, expected_original=original,
+        extra = {}
+        if hook.get("chain_original"):
+            output.extend(b"\0" * (-len(output) % 16))
+            chained = len(output)
+            output.extend(original_entry(chained, address, rewritten[address:address+4]))
+            extra["original_trampoline_offset"] = chained
+        records.append(dict(hook, **extra, offset=address, expected_original=original,
                             rewritten_before=before, stub_offset=pc,
                             pointer_offset=TABLE_OFF + slot*8))
     guards = []
