@@ -371,13 +371,16 @@ static BOOL WriteAll(int fd, const void *data, size_t length, NSError **error) {
         NSMutableData *buffer = [NSMutableData dataWithLength:ChunkSize];
         NSMutableArray<NSDictionary *> *pending = [NSMutableArray array];
         NSMutableDictionary *verified = [NSMutableDictionary dictionary];
+        /* NSError** uses autoreleasing write-back. Keep failures strongly alive
+         * across the inner pool drain and assign the out parameter afterward. */
+        NSError *scanError = nil;
         for (NSDictionary *file in _manifest[@"files"]) {
             @autoreleasepool {
                 NSString *leaf = nil; BOOL missing = NO; NSError *readError = nil;
                 int parent = ParentAt(game, file[@"path"], NO, &leaf, &missing, &readError);
                 int fd = parent >= 0 ? FileAt(parent, leaf, &missing, &readError) : -1;
                 if (parent >= 0) close(parent);
-                if (readError) { if (error) *error = readError; return NO; }
+                if (readError) { scanError = readError; break; }
                 if (fd < 0) { [pending addObject:file]; continue; }
                 struct stat st; BOOL sizeMatches = fstat(fd, &st) == 0 && (uint64_t)st.st_size == [file[@"size"] unsignedLongLongValue];
                 NSString *actual = sizeMatches ? [self hashFD:fd size:(uint64_t)st.st_size buffer:buffer
@@ -385,11 +388,12 @@ static BOOL WriteAll(int fd, const void *data, size_t length, NSError **error) {
                 NSDictionary *stamp = nil;
                 if ([actual isEqual:file[@"sha256"]] && fstat(fd, &st) == 0) stamp = Stamp(&st);
                 close(fd);
-                if (readError) { if (error) *error = readError; return NO; }
+                if (readError) { scanError = readError; break; }
                 if (!stamp) [pending addObject:file];
                 else verified[file[@"path"]] = stamp;
             }
         }
+        if (scanError) { if (error) *error = scanError; return NO; }
         if (!pending.count) {
             BOOL ok = [self writeReceipt:game verified:verified error:error]; if (ok) progress(@"资源就绪", 1); return ok;
         }
