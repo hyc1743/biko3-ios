@@ -8,10 +8,15 @@ import unittest
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-from mac_gameplay_probe import download_parts, main, observations, validate_keys
+from mac_gameplay_probe import DEFAULT_KEYS, download_parts, main, observations, validate_keys
 
 
 class GameplayProbeTests(unittest.TestCase):
+    def test_default_startup_script_selects_start_then_load(self):
+        times = [int(step.split(":", 1)[0]) for step in DEFAULT_KEYS.split(",")]
+        self.assertEqual(times[0], 2)
+        self.assertEqual(times[-1], 80)
+        self.assertGreaterEqual(min(b - a for a, b in zip(times, times[1:])), 6)
     def test_download_checks_every_pinned_part_and_rejects_tampering(self):
         parts = [{"name": f"Biko3Data.part{i+1:03d}.b3data", "size": 4,
                   "sha256": hashlib.sha256(b"part").hexdigest()} for i in range(6)]

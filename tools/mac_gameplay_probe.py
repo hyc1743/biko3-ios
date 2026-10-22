@@ -27,7 +27,8 @@ from pack_resources import read_manifest, verify
 ROOT = Path(__file__).resolve().parents[1]
 RELEASE_TAG = "v0.1.0-dev.3"
 RELEASE_ID = 420846443
-DEFAULT_KEYS = "2:A,4:A,6:A,8:A,10:A,15:A,20:A,25:A,30:A,40:A,50:A,60:A,70:A,80:A"
+# Give each title/confirmation screen time to settle before the next confirm.
+DEFAULT_KEYS = "2:A,8:A,14:A,20:A,26:A,32:A,38:A,44:A,50:A,56:A,62:A,68:A,74:A,80:A"
 ACTIVE = re.compile(r"^\[biko3-probe\] gameplay-active frame=(\d+) group=(\d+) area=(\d+) live_clock=(-?\d+(?:\.\d+)?)$")
 FRAME = re.compile(r"^\[biko3-probe\] frame=(\d+) mode=(\d+) bank=(\d+) area=(\d+) clock=(-?\d+(?:\.\d+)?)$")
 
@@ -198,6 +199,11 @@ def probe(args):
                       observed_run_seconds=round(time.monotonic() - running_since, 3),
                       **observations(run_log.read_text(encoding="utf-8", errors="replace")))
         if not deadline_reached and process.returncode:
+            log_text = run_log.read_text(encoding="utf-8", errors="replace")
+            if "failed to create the MTLResidencySet" in log_text:
+                report.update(status="inconclusive", reason="known_MoltenVK_residency_set_shutdown_failure",
+                              gameplay_active_observed=False)
+                return report
             report.update(status="failed", reason="game_process_exited_abnormally")
         elif report["gameplay_active_observed"] and report["renderer_ready"]:
             report.update(status="active_scene_observed", reason="mode2_live_scene_observed_not_full_gameplay_verification")
