@@ -3,6 +3,7 @@ name: Quicksave research - real game observation
 on:
   push:
     branches: [quicksave-research]
+  workflow_dispatch:
 
 permissions:
   contents: read
