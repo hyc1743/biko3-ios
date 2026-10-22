@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "repositories": {
+    "jhaizhou-ops/d2r-mobile": "53e7c5bb9ca3ea53e2160005be8fbe920cd9cb53",
+    "seedds/nxnative": "677345b0933f5f8754aeec3125d14df32683ca97",
+    "LNPANDY/nxnative-romfs-archive": "d02a01738237d5c6f5f52c43348c42e5f9d50037"
+  }
+}
