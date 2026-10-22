@@ -81,6 +81,15 @@ newlib stat callback reporting missing patch.pp, original main return and normal
 host process exit. Other operating systems/architectures report skipped with
 verified=false. This check does not establish an iOS device boot or playability.
 
+Optional `--windowed --out OUT/logs/guest-renderer` uses the real AppKit window
+and CAMetalLayer from front_mac. It additionally requires the original game's
+`Renderer ready:` log and original main returning 1 because assets are absent.
+The staged frontend exits AppKit normally after the guest returns only when
+the smoke-test environment flag is present. Production Mac completion behavior
+is preserved. Run this second mode only after native GPU availability has been
+verified; its GUI/renderer failure remains explicit evidence rather than a pass
+or an inference about iOS execution.
+
 The native platform error handler replaces the Horizon console/HID wait with a
 logged error and an optional frontend callback (`biko3_set_error_callback`). The
 game's original main then unwinds normally. The platform configuration's +32

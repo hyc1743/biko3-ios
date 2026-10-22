@@ -10,7 +10,7 @@ from unittest.mock import patch
 import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-from build_ios import NX_COMMIT, PINNED_SHA256, bundle_notices, game_compute_smoke, guest_startup_result, inspect_app, macho_sections, native_vulkan_smoke, package
+from build_ios import NX_COMMIT, PINNED_SHA256, bundle_notices, game_compute_smoke, guest_startup_result, renderer_startup_result, inspect_app, macho_sections, native_vulkan_smoke, package
 
 
 def name(value):
@@ -30,6 +30,18 @@ def executable():
 
 
 class IosBuildTests(unittest.TestCase):
+    def test_renderer_requires_original_ready_trace_and_windowed_mode(self):
+        report = {"status": "passed", "verified": True, "mode": "windowed", "exit_code": 0,
+                  "guest_main_result": 1, "checks": {key: True for key in (
+                      "libnx_initialized", "original_main_entered", "newlib_missing_patch_observed",
+                      "original_main_returned", "host_returned_normally", "original_renderer_ready",
+                      "missing_assets_returned_one")}}
+        self.assertTrue(renderer_startup_result(report))
+        for changed in (dict(report, mode="headless"),
+                        dict(report, checks=dict(report["checks"], original_renderer_ready=False))):
+            with self.assertRaises(ValueError):
+                renderer_startup_result(changed)
+
     def test_game_compute_requires_both_original_pipelines_or_strict_no_gpu_skip(self):
         from game_shader_smoke import EXPECTED
         passed = {"status": "passed", "verified": True, "source_nro_sha256": PINNED_SHA256,

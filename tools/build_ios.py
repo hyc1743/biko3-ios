@@ -165,6 +165,16 @@ def guest_startup_result(report):
     return True
 
 
+def renderer_startup_result(report):
+    if not guest_startup_result(report):
+        return False
+    if (report.get("mode") != "windowed" or
+            report.get("checks", {}).get("original_renderer_ready") is not True or
+            report.get("checks", {}).get("missing_assets_returned_one") is not True):
+        raise ValueError("Original renderer startup was not observed in a real window")
+    return True
+
+
 def game_compute_smoke(nro, mvk, output, logs, env):
     from game_shader_smoke import EXPECTED
     destination = Path(output) / "game-compute"
@@ -313,6 +323,16 @@ def build(args):
     guest_smoke = json.loads((logs / "guest-macos.json").read_text(encoding="utf-8"))
     startup_verified = guest_startup_result(guest_smoke)
     game_compute = game_compute_smoke(args.nro.resolve(), mvk, output, logs, env)
+    if gpu_smoke["verified"] and startup_verified:
+        run([sys.executable, ROOT / "tools/mac_guest_smoke.py", "--staged", output,
+             "--moltenvk-root", mvk, "--out", logs / "guest-renderer", "--windowed"],
+            env=env, log=logs / "guest-renderer-driver.log")
+        renderer_smoke = json.loads((logs / "guest-renderer.json").read_text(encoding="utf-8"))
+        renderer_verified = renderer_startup_result(renderer_smoke)
+    else:
+        renderer_smoke = {"status": "skipped", "verified": False,
+                          "reason": "native_guest_or_gpu_unavailable", "ios_device_execution": False}
+        renderer_verified = False
     ios = output / "ios"
     run(["xcodegen", "generate", "--spec", ios / "project.yml"], cwd=ios, env=env, log=logs / "xcodegen.log")
     run(["xcodebuild", "-project", ios / "Biko3.xcodeproj", "-scheme", "Biko3", "-configuration", "Release",
@@ -332,6 +352,7 @@ def build(args):
               "vulkan_gpu_smoke": gpu_smoke, "notices": notice_report,
               "macos_guest_startup_verified": startup_verified, "macos_guest_smoke": guest_smoke,
               "game_compute_pipelines_verified": game_compute["verified"], "game_compute_pipelines": game_compute,
+              "macos_original_renderer_verified": renderer_verified, "macos_original_renderer": renderer_smoke,
               "moltenvk_archive_sha256": MVK_SHA256, "ipa_bytes": ipa.stat().st_size,
               "ipa_sha256": sha256(ipa), **app_report}
     (output / "build-report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

@@ -42,7 +42,30 @@ def smoke_makefile(text, moltenvk):
                           " -lc++ -framework IOSurface -framework AppKit -framework CoreGraphics -framework IOKit", 1)
 
 
-def runtime_evidence(log, exit_code):
+def windowed_frontend(text):
+    """Let the real AppKit run loop return after the test guest has unwound."""
+    marker = 'getenv("BIKO3_MAC_SMOKE_EXIT")'
+    if marker in text:
+        return text
+    anchor = '    ((guest_arg *)p)->fn(); LOG("guest thread finished"); exit(0);'
+    if text.count(anchor) != 1:
+        raise ValueError("staged front_mac guest completion anchor changed")
+    replacement = '''    ((guest_arg *)p)->fn(); LOG("guest thread finished");
+    if (getenv("BIKO3_MAC_SMOKE_EXIT")) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSApp stop:nil];
+            NSEvent *wake = [NSEvent otherEventWithType:NSEventTypeApplicationDefined
+                location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0
+                context:nil subtype:0 data1:0 data2:0];
+            [NSApp postEvent:wake atStart:YES];
+        });
+        return NULL;
+    }
+    exit(0);'''
+    return text.replace(anchor, replacement, 1)
+
+
+def runtime_evidence(log, exit_code, windowed=False):
     returned = re.search(r"\[biko3\] original main returned (-?\d+)", log)
     checks = {
         "libnx_initialized": "[biko3] original libnx init completed" in log,
@@ -52,10 +75,13 @@ def runtime_evidence(log, exit_code):
         "original_main_returned": returned is not None,
         "host_returned_normally": exit_code == 0,
     }
+    if windowed:
+        checks["original_renderer_ready"] = "Renderer ready:" in log
+        checks["missing_assets_returned_one"] = returned is not None and int(returned.group(1)) == 1
     return checks, int(returned.group(1)) if returned else None
 
 
-def run_smoke(staged, moltenvk, prefix, timeout=120):
+def run_smoke(staged, moltenvk, prefix, timeout=120, windowed=False):
     prefix = prefix.resolve()
     prefix.parent.mkdir(parents=True, exist_ok=True)
     report_path = Path(str(prefix) + ".json")
@@ -64,7 +90,9 @@ def run_smoke(staged, moltenvk, prefix, timeout=120):
         "schema": 1, "status": "failed", "verified": False,
         "platform": platform.system(), "architecture": platform.machine(),
         "ios_device_execution": False, "gameplay_verified": False,
-        "scope": "real arm64 macOS guest startup/newlib with an empty game/Data directory",
+        "mode": "windowed" if windowed else "headless",
+        "scope": ("real arm64 macOS original renderer startup using AppKit/CAMetalLayer and empty assets"
+                  if windowed else "real arm64 macOS guest startup/newlib with an empty game/Data directory"),
         "build_log": build_log.name, "run_log": run_log.name,
     }
     started = time.monotonic()
@@ -88,12 +116,17 @@ def run_smoke(staged, moltenvk, prefix, timeout=120):
             raise ValueError("MoltenVK macOS universal library and Vulkan headers are required")
         if "biko3_hook_bindings" not in (host.parent / "games" / PROFILE / "Biko3HookTable.h").read_text():
             raise ValueError("generated guest hook bindings are missing")
+        if windowed:
+            front = host / "front_mac.m"
+            front.write_text(windowed_frontend(front.read_text(encoding="utf8")), encoding="utf8")
         makefile = host / "Makefile.biko3-smoke"
         makefile.write_text(smoke_makefile((host / "Makefile").read_text(encoding="utf8"), moltenvk),
                             encoding="utf8")
         env = {key: value for key, value in os.environ.items()
                if not key.startswith(("DM_", "BIKO3_"))}
         env["GAME"] = PROFILE
+        if windowed:
+            env.update(DM_WINDOW="1", BIKO3_MAC_SMOKE_EXIT="1")
         build = ["make", "-f", makefile.name, "-j", "3", "GAME=" + PROFILE, "dmhost"]
         with build_log.open("w", encoding="utf8") as output:
             compiled = subprocess.run(build, cwd=host, env=env, stdout=output,
@@ -121,12 +154,13 @@ def run_smoke(staged, moltenvk, prefix, timeout=120):
                                       stderr=subprocess.STDOUT, timeout=timeout)
         report["exit_code"] = executed.returncode
         log = run_log.read_text(encoding="utf8", errors="replace")
-        checks, guest_result = runtime_evidence(log, executed.returncode)
+        checks, guest_result = runtime_evidence(log, executed.returncode, windowed)
         report.update(checks=checks, guest_main_result=guest_result,
                       verified=all(checks.values()))
         report["status"] = "passed" if report["verified"] else "failed"
         if not report["verified"]:
-            report["reason"] = "guest_startup_or_newlib_evidence_incomplete"
+            report["reason"] = ("original_renderer_startup_evidence_incomplete" if windowed
+                                else "guest_startup_or_newlib_evidence_incomplete")
         return report
     except subprocess.TimeoutExpired as error:
         report.update(reason="process_timeout", timed_out=True,
@@ -146,8 +180,10 @@ def main(argv=None):
     parser.add_argument("--moltenvk-root", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True, help="output filename prefix")
     parser.add_argument("--timeout", type=int, choices=(60, 120), default=120)
+    parser.add_argument("--windowed", action="store_true",
+                        help="exercise the real original renderer with an AppKit CAMetalLayer window")
     args = parser.parse_args(argv)
-    report = run_smoke(args.staged, args.moltenvk_root, args.out, args.timeout)
+    report = run_smoke(args.staged, args.moltenvk_root, args.out, args.timeout, args.windowed)
     print(json.dumps(report, indent=2))
     return 0 if report["status"] in {"passed", "skipped"} else 1
 
