@@ -79,9 +79,27 @@ static const char *mapped(const char *path, char out[PATH_MAX]) {
     if (count < 0 || count >= PATH_MAX) { errno = ENAMETOOLONG; return NULL; }
     return out;
 }
+/* The original main looks for game/patch.pp, but the distributed Data tree
+ * contains Data/patch.pp. Keep an explicitly installed root patch preferred.
+ * This fallback is used only for stat and read-only open, never for writes. */
+static const char *read_patch_path(const char *path, char out[PATH_MAX]) {
+    const char *root = getenv("BIKO3_GAME_ROOT");
+    if (!root || !*root) return path;
+    char expected[PATH_MAX];
+    int count = snprintf(expected, sizeof expected, "%s/patch.pp", root);
+    if (count < 0 || count >= PATH_MAX || strcmp(path, expected)) return path;
+    struct stat info;
+    if (!stat(path, &info) || errno != ENOENT) return path;
+    count = snprintf(out, PATH_MAX, "%s/Data/patch.pp", root);
+    if (count < 0 || count >= PATH_MAX) return path;
+    if (stat(out, &info) || !S_ISREG(info.st_mode)) return path;
+    return out;
+}
 static int op_open(void *r, void *file, const char *path, int flags, int mode) {
-    char buf[PATH_MAX]; const char *p = mapped(path, buf);
+    char buf[PATH_MAX], patch_buf[PATH_MAX]; const char *p = mapped(path, buf);
     if (!p) return fail(r);
+    if (!(flags & (3 | 0x8 | 0x200 | 0x400 | 0x800)))
+        p = read_patch_path(p, patch_buf);
     int host_flags = flags & 3;
     if (flags & 0x8) host_flags |= O_APPEND;
     if (flags & 0x200) host_flags |= O_CREAT;
@@ -89,6 +107,7 @@ static int op_open(void *r, void *file, const char *path, int flags, int mode) {
     if (flags & 0x800) host_flags |= O_EXCL;
     int fd = open(p, host_flags, mode);
     if (fd < 0) return fail(r);
+    if (p == patch_buf) fprintf(stderr, "[biko3] reading bundled Data/patch.pp\n");
     *(int *)file = fd; return 0;
 }
 static int op_close(void *r, void *file) { return close(*(int *)file) ? fail(r) : 0; }
@@ -115,7 +134,8 @@ static void guest_stat(GuestStat *g, const struct stat *s) {
     g->blksize = s->st_blksize; g->blocks = s->st_blocks;
 }
 static int op_stat(void *r, const char *path, GuestStat *out) {
-    char buf[PATH_MAX]; const char *p = mapped(path, buf); struct stat s;
+    char buf[PATH_MAX], patch_buf[PATH_MAX]; const char *p = mapped(path, buf); struct stat s;
+    if (p) p = read_patch_path(p, patch_buf);
     if (!p || stat(p, &s)) {
         int saved = errno;
         if (getenv("BIKO3_FS_TRACE"))

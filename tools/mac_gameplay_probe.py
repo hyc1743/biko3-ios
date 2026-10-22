@@ -170,7 +170,7 @@ def probe(args):
             raise ValueError("Research host compilation failed; see build.log")
         saves, captures = private / "saves", private / "captures"
         saves.mkdir(); captures.mkdir()
-        env.update(DM_WINDOW="1", BIKO3_MAC_SMOKE_EXIT="1", BIKO3_PROBE_TRACE="1", DM_KEYS=args.keys,
+        env.update(DM_WINDOW="1", BIKO3_MAC_SMOKE_EXIT="1", BIKO3_PROBE_TRACE="1", BIKO3_FS_TRACE="1", DM_KEYS=args.keys,
                    BIKO3_GAME_ROOT=str(game), BIKO3_SAVE_ROOT=str(saves), BIKO3_CAPTURE_ROOT=str(captures),
                    DM_ROMFS=str(game), DM_SAVE=str(saves), DM_TEMP=str(private), DM_AUDIO="1", DM_SVC="1")
         report.update(compiled=True, guest_sha256=stage["guest_sha256"], patched_sha256=stage["patched_sha256"],
