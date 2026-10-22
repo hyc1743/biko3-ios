@@ -109,7 +109,8 @@ def native_vulkan_smoke(mvk, work, logs, env):
          "-Werror=implicit-function-declaration", "-I", Path(mvk) / "include",
          ROOT / "ios/runtime/Biko3Vulkan.c", ROOT / "tests/native/vulkan_smoke.c",
          library, "-lc++", "-framework", "Metal", "-framework", "QuartzCore",
-         "-framework", "IOSurface", "-framework", "Foundation", "-o", executable],
+         "-framework", "IOSurface", "-framework", "Foundation", "-framework", "AppKit",
+         "-framework", "CoreGraphics", "-framework", "IOKit", "-o", executable],
         env=env, log=Path(logs) / "vulkan-macos-build.log")
     log = Path(logs) / "vulkan-macos-smoke.log"
     log.parent.mkdir(parents=True, exist_ok=True)

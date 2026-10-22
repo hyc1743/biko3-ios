@@ -39,7 +39,7 @@ def smoke_makefile(text, moltenvk):
     if cflags.count(anchor) != 1:
         raise ValueError("staged Makefile macOS link anchor changed")
     return cflags.replace(anchor, anchor + " " + shlex.quote(str(library)) +
-                          " -lc++ -framework IOSurface", 1)
+                          " -lc++ -framework IOSurface -framework AppKit -framework CoreGraphics -framework IOKit", 1)
 
 
 def runtime_evidence(log, exit_code):
