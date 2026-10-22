@@ -52,10 +52,17 @@ def binding_header(hooks, build_id):
 
 
 def frontend(text):
-    text = '#include "Biko3Libnx.h"\n' + text
+    text = '#include "Biko3Libnx.h"\n#import "Biko3ImportViewController.h"\n' + text
     text = text.replace('@"romfs"', '@"game"').replace('@"save"', '@"saves"')
     text = replace_once(text, 'for (NSString *d in @[@"saves", @"temp"])',
-                        'for (NSString *d in @[@"saves", @"temp", @"game", @"captures"])')
+                        'for (NSString *d in @[@"saves", @"temp", @"game", @"captures", @"ResourcePacks"])')
+    text = replace_once(text, 'static int boot_env(void) {', 'static int boot_env(int resources_ready) {')
+    text = replace_once(text, 'for (NSString *d in @[@"game", @"temp"])',
+                        'for (NSString *d in @[@"game", @"temp", @"ResourcePacks"])')
+    text = replace_once(text, '    for (NSString *d in @[@"saves",',
+                        '    static int initialized;\n    if (!initialized) {\n    initialized = 1;\n    for (NSString *d in @[@"saves",')
+    text = replace_once(text, '    NSString *romfs = romfs_locate();',
+                        '    }\n    if (!resources_ready) return 0;\n    NSString *romfs = romfs_locate();')
     text = replace_once(text, 'setenv("DM_ROMFS", romfs.fileSystemRepresentation, 0);',
                         'setenv("DM_ROMFS", romfs.fileSystemRepresentation, 0);\n'
                         '    setenv("BIKO3_GAME_ROOT", romfs.fileSystemRepresentation, 1);\n'
@@ -86,7 +93,15 @@ def frontend(text):
 '''
     text = replace_once(text, 'int main(int argc, char **argv) {', error_ui + '\nint main(int argc, char **argv) {')
     text = replace_once(text, '@autoreleasepool { g_boot_ok = boot_env(); }',
-                        '@autoreleasepool { biko3_set_error_callback(biko3_show_error); g_boot_ok = boot_env(); }')
+                        '@autoreleasepool { biko3_set_error_callback(biko3_show_error); boot_env(0); }')
+    text = replace_once(text, '    self.window.rootViewController = front_ios_root();', '''    __weak UIWindow *window = self.window;
+    self.window.rootViewController = [[Biko3ImportViewController alloc] initWithReady:^{
+        g_boot_ok = boot_env(1);
+        if (!g_boot_ok || !window) return NO;
+        window.rootViewController = front_ios_root();
+        front_ios_focus_event(3);
+        return YES;
+    }];''')
     return text
 
 
@@ -166,10 +181,14 @@ def stage(args):
     (profile / "Biko3HookTable.h").write_text(binding_header(hooks, image.build_id), encoding="utf8")
     ios = out / "ios"
     shutil.copytree(source / "dm/ios/Sources", ios / "Sources")
+    for path in (ROOT / "ios/import").iterdir():
+        if path.suffix in {".h", ".m"}:
+            shutil.copyfile(path, ios / "Sources" / path.name)
     shutil.copyfile(ROOT / "ios/project.yml", ios / "project.yml")
     gen = ios / "Gen"
     dm = gen / "dm"
     dm.mkdir(parents=True)
+    shutil.copyfile(ROOT / "ios/resources/Biko3Data.manifest.json", dm / "Biko3Data.manifest.json")
     for path in hooked.glob("*.tsv"):
         shutil.copyfile(path, dm / path.name)
     for name in ("shader_map.tsv", "pso_manifest.tsv"):

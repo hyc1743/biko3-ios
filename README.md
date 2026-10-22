@@ -8,7 +8,7 @@
 
 公共仓库为 hyc1743/biko3-ios，Actions 的 Build Biko3 development IPA 工作流使用 macOS 26/Xcode，打包真实嵌入的客体程序，不生成替代游戏的空壳。成功后下载 Biko3-development-IPA artifact 中的 IPA 和 build-report.json。未签名的开发 IPA 需要通过自己的侧载签名工具安装。
 
-游戏 Data 资源不在仓库或 IPA 中。安装后从“文件”App 把原始 Data 文件夹放到 Biko3 的 game 目录，完整路径为 Documents/game/Data，然后重启应用。存档位于 Documents/saves，日志位于 Documents/log.txt。当前设备启动、第一帧、完整玩法及存档兼容性仍待验证。
+游戏 Data 资源不在仓库或 IPA 中。dev.2 起可将六个资源分卷复制到 Biko3 的文件共享根目录，首次启动自动校验并展开到 Documents/game/Data，显示进度并支持失败重试，详见[资源分卷导入](docs/resource-packs.md)。也可继续手动复制完整 Data。存档位于 Documents/saves，日志位于 Documents/log.txt。当前设备启动、第一帧、完整玩法及存档兼容性仍待验证。
 
 云端原始 NRO 输入使用 AES-GCM 容器，只有 Actions Secret BIKO3_GUEST_KEY 可以解密。密钥、NSP 和游戏 Data 不提交。构建产物会包含移植后的客体程序。
 

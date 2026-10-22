@@ -307,6 +307,11 @@ def build(args):
     env = dict(os.environ, MOLTENVK_ROOT=str(mvk))
     env.pop("BIKO3_GUEST_KEY", None)
     logs = output / "logs"
+    run([sys.executable, ROOT / "tools/resource_import_smoke.py", "--out", logs / "resource-import"],
+        env=env, log=logs / "resource-import-driver.log")
+    resource_import = json.loads((logs / "resource-import.json").read_text(encoding="utf8"))
+    if resource_import.get("status") != "passed" or resource_import.get("verified") is not True:
+        raise ValueError("Native resource importer was not verified; see resource-import.json")
     sdk_path = run(["xcrun", "--sdk", "iphoneos", "--show-sdk-path"])
     run(["xcrun", "--sdk", "iphoneos", "clang", "-std=c11", "-fsyntax-only",
          "-Werror=implicit-function-declaration", "-target", "arm64-apple-ios26.0",
@@ -346,7 +351,10 @@ def build(args):
     package(app, ipa)
     report = {"kind": "development-guest-ipa", "signed": False, "runtime_verified": False,
               "playable_verified": False, "contains_guest_executable": True, "contains_game_data": False,
-              "data_import": "Documents/game/Data", "guest_sha256": PINNED_SHA256,
+              "data_import": "Documents/game/Data", "resource_pack_import": True,
+              "resource_import_smoke": resource_import,
+              "resource_pack_manifest_sha256": sha256(ROOT / "ios/resources/Biko3Data.manifest.json"),
+              "guest_sha256": PINNED_SHA256,
               "nxnative_commit": NX_COMMIT, "moltenvk_version": MVK_VERSION,
               "vulkan_bridge_syntax_checked": True, "vulkan_gpu_smoke_verified": gpu_smoke["verified"],
               "vulkan_gpu_smoke": gpu_smoke, "notices": notice_report,
