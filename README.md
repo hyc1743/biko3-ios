@@ -6,25 +6,27 @@
 
 - 安装 iOS 26 或更新版本的 iPhone。
 - 从 [Releases](https://github.com/hyc1743/biko3-ios/releases) 下载新版 `Biko3-development.ipa`，使用自己的签名与侧载工具安装。IPA 未签名，项目不提供签名证书。
-- 准备你自己的完整游戏 `Data` 文件夹。IPA 和本仓库均不附带游戏数据或资源分卷。
+- 从 [dev.3 下载页](https://github.com/hyc1743/biko3-ios/releases/tag/v0.1.0-dev.3) 下载下面列出的六个游戏资源分卷。资源单独提供，IPA 本身不包含 Data。
 - 手机需要容纳约 3 GB 的分卷和约 3 GB 的展开数据，首次导入时请预留足够空间。
 
 ## 安装游戏资源
 
-推荐先把 Data 打成六个大文件，再传入手机，避免逐个复制小文件。已导入过资源的玩家更新 IPA 后可以继续使用原有数据。
+首次安装下载六个资源分卷即可，无需下载源码、安装 Python 或自行打包。已导入过资源的玩家更新 IPA 后可以继续使用原有数据，无需重复下载。
 
-### 1. 在电脑上打包
+### 1. 下载全部六个分卷
 
-下载本仓库源码，安装 Python 3.12 或更新版本，在项目目录执行：
+在 [dev.3 的 Assets 列表](https://github.com/hyc1743/biko3-ios/releases/tag/v0.1.0-dev.3) 中下载以下文件，也可以点击表内链接：
 
-```powershell
-python tools/pack_resources.py pack --data "D:/你的游戏/Data" --out "out/resource-packs"
-python tools/pack_resources.py verify --parts "out/resource-packs" --data "D:/你的游戏/Data"
-```
+| 文件 | 大小 |
+| --- | ---: |
+| [Biko3Data.part001.b3data](https://github.com/hyc1743/biko3-ios/releases/download/v0.1.0-dev.3/Biko3Data.part001.b3data) | 512 MiB |
+| [Biko3Data.part002.b3data](https://github.com/hyc1743/biko3-ios/releases/download/v0.1.0-dev.3/Biko3Data.part002.b3data) | 512 MiB |
+| [Biko3Data.part003.b3data](https://github.com/hyc1743/biko3-ios/releases/download/v0.1.0-dev.3/Biko3Data.part003.b3data) | 512 MiB |
+| [Biko3Data.part004.b3data](https://github.com/hyc1743/biko3-ios/releases/download/v0.1.0-dev.3/Biko3Data.part004.b3data) | 512 MiB |
+| [Biko3Data.part005.b3data](https://github.com/hyc1743/biko3-ios/releases/download/v0.1.0-dev.3/Biko3Data.part005.b3data) | 512 MiB |
+| [Biko3Data.part006.b3data](https://github.com/hyc1743/biko3-ios/releases/download/v0.1.0-dev.3/Biko3Data.part006.b3data) | 约 284 MiB |
 
-将示例路径替换成自己的 Data 路径。输出目录必须尚不存在；重复打包时请换一个目录。工具只使用 Python 标准库，无需另装 Python 依赖。
-
-打包后得到 `Biko3Data.part001.b3data` 至 `Biko3Data.part006.b3data`。应用内置匹配的文件清单，只有路径、大小和内容与该清单一致的原始 Data 才能导入；修改版或其他版本的资源可能无法通过校验。
+六卷合计约 2.98 GB，**必须全部下载，保持原文件名**。应用内置匹配的校验清单，复制完成后会自动检查完整性。不要把 GitHub 自动生成的 `Source code` 压缩包当作游戏资源。
 
 ### 2. 复制到 iPhone
 
@@ -44,7 +46,7 @@ python tools/pack_resources.py verify --parts "out/resource-packs" --data "D:/�
 - 中断后重开：已完成且校验正确的文件会保留，未完成文件重新展开。
 - 导入完成：自动进入游戏。确认可以游玩后，可删除手机里的六个分卷，释放约 3 GB 空间；保留 `game/Data`。
 
-也可直接复制完整 Data，目录结构必须是 `Biko3/game/Data`，避免多嵌套一层 `Data/Data`。dev.2 起支持分卷导入；新图标与下述手柄布局从 dev.3 起提供。更多说明见[资源分卷指南](docs/resource-packs.md)。
+也可直接复制自己已有的完整 Data，目录结构必须是 `Biko3/game/Data`，避免多嵌套一层 `Data/Data`。dev.2 起支持分卷导入；新图标与下述手柄布局从 dev.3 起提供。自行打包和 SHA-256 校验方法见[资源分卷指南](docs/resource-packs.md)。
 
 ## 操作
 

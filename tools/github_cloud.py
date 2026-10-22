@@ -18,6 +18,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -69,6 +70,22 @@ class UploadRedirect(urllib.request.HTTPRedirectHandler):
         # Asset uploads are pinned to the documented GitHub upload host.
         # Reject redirects entirely rather than risking forwarding a token/body.
         raise ValueError("GitHub release upload redirected unexpectedly")
+
+
+class UploadProgress:
+    """A bounded reader; credentials and content never enter progress output."""
+    def __init__(self, source, total, callback):
+        self.source, self.total, self.callback = source, total, callback
+        self.done, self.last = 0, 0.0
+
+    def read(self, size=-1):
+        data = self.source.read(min(size, 1024 * 1024) if size >= 0 else 1024 * 1024)
+        self.done += len(data)
+        now = time.monotonic()
+        if now - self.last >= 5 or self.done == self.total:
+            self.last = now
+            self.callback(self.done, self.total)
+        return data
 
 
 def repository(value):
@@ -126,7 +143,7 @@ class GitHub:
                         {"tag_name": tag, "target_commitish": target_sha, "name": tag,
                          "body": body, "draft": False, "prerelease": True, "make_latest": "false"})
 
-    def upload_release_asset(self, repo, release_id, path):
+    def upload_release_asset(self, repo, release_id, path, *, progress=None):
         path = Path(path)
         url = f"https://uploads.github.com/repos/{repository(repo)}/releases/{int(release_id)}/assets?"
         url += urllib.parse.urlencode({"name": path.name})
@@ -135,7 +152,8 @@ class GitHub:
                    "Content-Length": str(path.stat().st_size), "X-GitHub-Api-Version": "2022-11-28"}
         opener = urllib.request.build_opener(UploadRedirect())
         with path.open("rb") as source:
-            request = urllib.request.Request(url, data=source, method="POST", headers=headers)
+            body = UploadProgress(source, path.stat().st_size, progress) if progress else source
+            request = urllib.request.Request(url, data=body, method="POST", headers=headers)
             with opener.open(request, timeout=180) as response:
                 result = json.load(response)
         if result.get("name") != path.name or result.get("size") != path.stat().st_size or result.get("state") != "uploaded":
@@ -273,7 +291,7 @@ def publication_files(root, manifest):
     return result
 
 
-def publish(github, repo, root, manifest, branch="main"):
+def publish(github, repo, root, manifest, branch="main", message="Publish reviewed iOS port source"):
     """Publish an isolated commit containing only explicitly reviewed files."""
     repository(repo)
     if not re.fullmatch(r"[A-Za-z0-9_-]+", branch):
@@ -313,7 +331,7 @@ def publish(github, repo, root, manifest, branch="main"):
         if actual != {entry for entry, _, _ in files}:
             raise ValueError("Git staging differs from the reviewed publication manifest")
         git("-c", "user.name=Biko3 cloud", "-c", "user.email=biko3-cloud@users.noreply.github.com",
-            "commit", "--allow-empty", "-m", "Publish reviewed iOS port source", cwd=directory)
+            "commit", "--allow-empty", "-m", message, cwd=directory)
         commit = git("rev-parse", "HEAD", cwd=directory).strip()
         git("push", "origin", "HEAD:refs/heads/" + branch, cwd=directory)
     return {"repository": repo, "commit": commit, "files": len(files)}
@@ -348,6 +366,7 @@ def main(argv=None):
     push.add_argument("--root", type=Path, default=Path.cwd())
     push.add_argument("--manifest", type=Path, required=True)
     push.add_argument("--branch", default="main")
+    push.add_argument("--message", default="Publish reviewed iOS port source")
     dispatch = commands.add_parser("dispatch")
     dispatch.add_argument("repo")
     dispatch.add_argument("workflow")
@@ -395,7 +414,7 @@ def main(argv=None):
         elif args.command == "upload-release-assets":
             result = github.upload_release_assets(args.repo, args.release_id, args.files)
         elif args.command == "publish":
-            result = publish(github, args.repo, args.root, args.manifest, args.branch)
+            result = publish(github, args.repo, args.root, args.manifest, args.branch, args.message)
         elif args.command == "dispatch":
             inputs = json.loads(args.inputs)
             if not isinstance(inputs, dict):

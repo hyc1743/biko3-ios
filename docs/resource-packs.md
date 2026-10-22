@@ -6,6 +6,8 @@
 
 ## 在 iPhone 上导入
 
+已打包的六个 `.b3data` 文件可从 [dev.3 Release](https://github.com/hyc1743/biko3-ios/releases/tag/v0.1.0-dev.3) 下载，无需自行打包；六卷需全部下载，保持原文件名。
+
 分卷导入需要 dev.2 或更新版 IPA；dev.1 不支持此功能。
 
 1. 安装包含资源导入功能的新版 IPA。
@@ -85,8 +87,8 @@ python tools/pack_resources.py restore --parts out/resource-packs --out out/rest
 
 ## 清单格式和约束
 
-`ios/resources/Biko3Data.manifest.json` 是可公开的元数据，将随新版 IPA 打包。资源内容和
-六个分卷保留在本地，不提交到公共仓库。`out/`、`switch/` 均已被 Git 忽略。
+`ios/resources/Biko3Data.manifest.json` 随 IPA 打包。六个分卷按用户要求单独发布为 dev.3
+Release 附件，不放入 Git 源码历史或 IPA。`out/`、`switch/` 均已被 Git 忽略。
 
 顶层字段为 `schema: 1`、`format: "biko3-resource-parts-v1"`、`game: "biko3"`、
 `total_bytes`、`file_count`、`part_bytes`、`parts`、`files`。本打包器还写入可选字段
