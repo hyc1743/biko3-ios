@@ -10,7 +10,7 @@ from unittest.mock import patch
 import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-from build_ios import NX_COMMIT, PINNED_SHA256, bundle_notices, guest_startup_result, inspect_app, macho_sections, native_vulkan_smoke, package
+from build_ios import NX_COMMIT, PINNED_SHA256, bundle_notices, game_compute_smoke, guest_startup_result, inspect_app, macho_sections, native_vulkan_smoke, package
 
 
 def name(value):
@@ -30,6 +30,33 @@ def executable():
 
 
 class IosBuildTests(unittest.TestCase):
+    def test_game_compute_requires_both_original_pipelines_or_strict_no_gpu_skip(self):
+        from game_shader_smoke import EXPECTED
+        passed = {"status": "passed", "verified": True, "source_nro_sha256": PINNED_SHA256,
+                  "native_exit_code": 0, "pipeline_results": [
+                      {"sha256": digest, "role": expected["role"], "stage": "comp",
+                       "entry_point": "main", "pipeline_created": True} for digest, expected in EXPECTED.items()]}
+        skipped = {"status": "skipped", "verified": False, "source_nro_sha256": PINNED_SHA256,
+                   "native_exit_code": 77, "reason": "runner_gpu_unavailable",
+                   "native_skip_reason": "zero_physical_devices", "pipeline_results": []}
+        for code, evidence, accepted in ((0, passed, True), (77, skipped, True),
+                (0, dict(passed, pipeline_results=passed["pipeline_results"][:1]), False),
+                (77, dict(skipped, native_skip_reason="shader_failed"), False),
+                (1, dict(passed, status="failed", verified=False), False)):
+            with self.subTest(code=code, accepted=accepted), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                destination = root / "game-compute"
+                destination.mkdir()
+                (destination / "result.json").write_text(json.dumps(evidence))
+                with patch("build_ios.subprocess.run", return_value=subprocess.CompletedProcess([], code)):
+                    if accepted:
+                        result = game_compute_smoke(root / "guest.nro", root / "mvk", root, root / "logs", {})
+                        self.assertEqual(result["verified"], code == 0)
+                    else:
+                        with self.assertRaises(ValueError):
+                            game_compute_smoke(root / "guest.nro", root / "mvk", root, root / "logs", {})
+                self.assertEqual(json.loads((root / "logs/game-compute.json").read_text()), evidence)
+
     def test_guest_startup_requires_every_trace_and_normal_guest_return(self):
         report = {"status": "passed", "verified": True, "exit_code": 0, "guest_main_result": 1,
                   "checks": {key: True for key in ("libnx_initialized", "original_main_entered",

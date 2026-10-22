@@ -1,6 +1,7 @@
 /* Generated from hash-bound game API calls; contains API names only. */
 BIKO3_VK_EXPORT(vkGetInstanceProcAddr)
 BIKO3_VK_EXPORT(vkGetDeviceProcAddr)
+BIKO3_VK_EXPORT(vkDestroyInstance)
 BIKO3_VK_EXPORT(vkEnumeratePhysicalDevices)
 BIKO3_VK_EXPORT(vkGetPhysicalDeviceQueueFamilyProperties)
 BIKO3_VK_EXPORT(vkGetPhysicalDeviceMemoryProperties)

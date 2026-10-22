@@ -8,11 +8,19 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 import patch_guest_hooks as hooks
+import patch_vulkan
 from nro import NroError
 from test_nro import sample
 
 
 class VulkanPatchTests(unittest.TestCase):
+    def test_unmapped_wrapper_entry_including_error_cleanup_is_rejected(self):
+        data = bytearray(0x200)
+        data[0x80:0x84] = hooks.branch(0x80, 0x100)
+        with patch.object(patch_vulkan, "WRAPPER_START", 0x100), patch.object(patch_vulkan, "WRAPPER_END", 0x180):
+            with self.assertRaisesRegex(NroError, "Unmapped direct Vulkan"):
+                patch_vulkan.game_wrapper_calls(data, {})
+            self.assertEqual(patch_vulkan.game_wrapper_calls(data, {0x100: {}}), {0x100: [0x80]})
     def test_branch_signed_reach_and_alignment(self):
         for delta in (-0x8000000, -4, 0, 0x7fffffc):
             word = struct.unpack("<I", hooks.branch(0x8000000, 0x8000000+delta))[0]
@@ -68,6 +76,9 @@ class VulkanPatchTests(unittest.TestCase):
         self.assertIn("vkCreateComputePipelines",names)
         self.assertIn("vkCmdDispatch",names)
         self.assertIn("vkEnumeratePhysicalDevices",names)
+        destroy = next(h for h in manifest["hooks"] if h["symbol"] == "vkDestroyInstance")
+        self.assertEqual(destroy["offset"], 0xd23b0)
+        self.assertIn(0xd09e8, destroy["call_sites"])
         self.assertEqual(manifest["hooks"][0]["symbol"],"vkGetInstanceProcAddr")
         self.assertEqual(manifest["hooks"][1]["symbol"],"vkGetDeviceProcAddr")
         exports=(root/"ios/runtime/Biko3VulkanExports.inc").read_text()

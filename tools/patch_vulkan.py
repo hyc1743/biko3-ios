@@ -9,6 +9,27 @@ from nro import NroError
 from patch_guest_hooks import SOURCE_SHA
 
 LOOKUP_SHA = "54ec412915f04908e26bd784a9ae3a4d284926e9f745e99b54388b2ae0330690"
+WRAPPER_START = 0xd23b0
+WRAPPER_END = 0xd5370
+
+
+def game_wrapper_calls(source, exports):
+    called, missing = {}, {}
+    for pc in range(0x80, WRAPPER_START, 4):
+        word = struct.unpack_from("<I", source, pc)[0]
+        if word & 0x7c000000 != 0x14000000:
+            continue
+        imm = word & 0x3ffffff
+        if imm & (1 << 25): imm -= 1 << 26
+        address = pc + imm * 4
+        if WRAPPER_START <= address < WRAPPER_END and address not in exports:
+            missing.setdefault(address, []).append(pc)
+        if address in exports:
+            called.setdefault(address, []).append(pc)
+    if missing:
+        raise NroError("Unmapped direct Vulkan wrapper call(s): " +
+                       ", ".join(hex(address) for address in sorted(missing)))
+    return called
 
 def recover_hooks(source, assembly):
     if hashlib.sha256(source).hexdigest() != SOURCE_SHA: raise NroError("source SHA mismatch")
@@ -30,18 +51,11 @@ def recover_hooks(source, assembly):
     # Independently analyzed renderer thunks and NN setup calls confirm these
     # global/core exports not present in the repeated lookup shape.
     for address, name in ((0xd5340,"vkCreateInstance"), (0xd23d0,"vkEnumeratePhysicalDevices"),
-                          (0xd23c0,"vkDestroyInstance")):
+                          (0xd23b0,"vkDestroyInstance")):
         exports[address] = {"name":name, "evidence":"renderer Ghidra call arguments and wrapper dispatch"}
-    called = {}
     # Entire game/front-end prefix ends where the Vulkan export wrapper block
     # begins. B/BL are both examined; driver-internal calls are excluded.
-    for pc in range(0x80, 0xd23c0, 4):
-        word = struct.unpack_from("<I", source, pc)[0]
-        if word & 0x7c000000 == 0x14000000:
-            imm = word & 0x3ffffff
-            if imm & (1 << 25): imm -= 1 << 26
-            address = pc + imm*4
-            if address in exports: called.setdefault(address, []).append(pc)
+    called = game_wrapper_calls(source, exports)
     for address in (0xdb480, 0xdb3e0): called.setdefault(address, [])
     hooks = []
     for slot, address in enumerate(sorted(called, key=lambda a: (a not in (0xdb480,0xdb3e0), -a if a in (0xdb480,0xdb3e0) else a))):
@@ -60,7 +74,7 @@ def main(argv=None):
     if LOOKUP_SHA and hashlib.sha256(raw).hexdigest()!=LOOKUP_SHA: raise NroError("lookup assembly SHA mismatch")
     hooks=recover_hooks(args.nro.read_bytes(),raw.decode("utf8"))
     result={"schema":1,"source_nro_sha256":SOURCE_SHA,"assembly_sha256":hashlib.sha256(raw).hexdigest(),
-            "coverage":"All statically decoded B/BL from game prefix [0x80,0xd23c0) to mapped Vulkan exports; dynamic procedure calls use resolver hooks",
+            "coverage":"All statically decoded B/BL from game prefix [0x80,0xd23b0) to mapped Vulkan exports; unmapped wrapper-block calls fail closed; dynamic procedure calls use resolver hooks",
             "hooks":hooks}
     args.out.parent.mkdir(parents=True,exist_ok=True)
     args.out.write_text(json.dumps(result,indent=2)+"\n",encoding="utf8")

@@ -2,7 +2,7 @@
   "schema": 1,
   "source_nro_sha256": "31320a8ce44f8e1826fc90ed5b26cb714c551413b286f8c69adb03f9e8b07178",
   "assembly_sha256": "54ec412915f04908e26bd784a9ae3a4d284926e9f745e99b54388b2ae0330690",
-  "coverage": "All statically decoded B/BL from game prefix [0x80,0xd23c0) to mapped Vulkan exports; dynamic procedure calls use resolver hooks",
+  "coverage": "All statically decoded B/BL from game prefix [0x80,0xd23b0) to mapped Vulkan exports; unmapped wrapper-block calls fail closed; dynamic procedure calls use resolver hooks",
   "hooks": [
     {
       "offset": 898176,
@@ -31,8 +31,22 @@
       }
     },
     {
-      "offset": 861136,
+      "offset": 861104,
       "slot": 2,
+      "symbol": "vkDestroyInstance",
+      "kind": "vulkan",
+      "expected_original": "800000b4026840f9f00302aa00021fd6",
+      "call_sites": [
+        854504
+      ],
+      "export_evidence": {
+        "name": "vkDestroyInstance",
+        "evidence": "renderer Ghidra call arguments and wrapper dispatch"
+      }
+    },
+    {
+      "offset": 861136,
+      "slot": 3,
       "symbol": "vkEnumeratePhysicalDevices",
       "kind": "vulkan",
       "expected_original": "036c40f9f00303aa00021fd600000000",
@@ -47,7 +61,7 @@
     },
     {
       "offset": 861168,
-      "slot": 3,
+      "slot": 4,
       "symbol": "vkGetPhysicalDeviceQueueFamilyProperties",
       "kind": "vulkan",
       "expected_original": "03ac49f9f00303aa00021fd600000000",
@@ -63,7 +77,7 @@
     },
     {
       "offset": 861184,
-      "slot": 4,
+      "slot": 5,
       "symbol": "vkGetPhysicalDeviceMemoryProperties",
       "kind": "vulkan",
       "expected_original": "02b049f9f00302aa00021fd600000000",
@@ -81,7 +95,7 @@
     },
     {
       "offset": 861248,
-      "slot": 5,
+      "slot": 6,
       "symbol": "vkCreateDevice",
       "kind": "vulkan",
       "expected_original": "04c049f9f00304aa00021fd600000000",
@@ -96,7 +110,7 @@
     },
     {
       "offset": 861264,
-      "slot": 6,
+      "slot": 7,
       "symbol": "vkDestroyDevice",
       "kind": "vulkan",
       "expected_original": "800000b4022842f9f00302aa00021fd6",
@@ -111,7 +125,7 @@
     },
     {
       "offset": 861344,
-      "slot": 7,
+      "slot": 8,
       "symbol": "vkEnumerateDeviceExtensionProperties",
       "kind": "vulkan",
       "expected_original": "04c849f9f00304aa00021fd600000000",
@@ -127,7 +141,7 @@
     },
     {
       "offset": 861360,
-      "slot": 8,
+      "slot": 9,
       "symbol": "vkGetDeviceQueue",
       "kind": "vulkan",
       "expected_original": "042c42f9f00304aa00021fd600000000",
@@ -142,7 +156,7 @@
     },
     {
       "offset": 861376,
-      "slot": 9,
+      "slot": 10,
       "symbol": "vkQueueSubmit",
       "kind": "vulkan",
       "expected_original": "040840f9843042f9f00304aa00021fd6",
@@ -159,7 +173,7 @@
     },
     {
       "offset": 861408,
-      "slot": 10,
+      "slot": 11,
       "symbol": "vkDeviceWaitIdle",
       "kind": "vulkan",
       "expected_original": "013842f9f00301aa00021fd600000000",
@@ -180,7 +194,7 @@
     },
     {
       "offset": 861424,
-      "slot": 11,
+      "slot": 12,
       "symbol": "vkAllocateMemory",
       "kind": "vulkan",
       "expected_original": "043c42f9f00304aa00021fd600000000",
@@ -196,7 +210,7 @@
     },
     {
       "offset": 861440,
-      "slot": 12,
+      "slot": 13,
       "symbol": "vkFreeMemory",
       "kind": "vulkan",
       "expected_original": "034042f9f00303aa00021fd600000000",
@@ -212,7 +226,7 @@
     },
     {
       "offset": 861456,
-      "slot": 13,
+      "slot": 14,
       "symbol": "vkMapMemory",
       "kind": "vulkan",
       "expected_original": "064442f9f00306aa00021fd600000000",
@@ -227,7 +241,7 @@
     },
     {
       "offset": 861472,
-      "slot": 14,
+      "slot": 15,
       "symbol": "vkUnmapMemory",
       "kind": "vulkan",
       "expected_original": "024842f9f00302aa00021fd600000000",
@@ -242,7 +256,7 @@
     },
     {
       "offset": 861488,
-      "slot": 15,
+      "slot": 16,
       "symbol": "vkFlushMappedMemoryRanges",
       "kind": "vulkan",
       "expected_original": "034c42f9f00303aa00021fd600000000",
@@ -272,7 +286,7 @@
     },
     {
       "offset": 861504,
-      "slot": 16,
+      "slot": 17,
       "symbol": "vkInvalidateMappedMemoryRanges",
       "kind": "vulkan",
       "expected_original": "035042f9f00303aa00021fd600000000",
@@ -289,7 +303,7 @@
     },
     {
       "offset": 861536,
-      "slot": 17,
+      "slot": 18,
       "symbol": "vkGetBufferMemoryRequirements",
       "kind": "vulkan",
       "expected_original": "035842f9f00303aa00021fd600000000",
@@ -304,7 +318,7 @@
     },
     {
       "offset": 861552,
-      "slot": 18,
+      "slot": 19,
       "symbol": "vkBindBufferMemory",
       "kind": "vulkan",
       "expected_original": "045c42f9f00304aa00021fd600000000",
@@ -320,7 +334,7 @@
     },
     {
       "offset": 861568,
-      "slot": 19,
+      "slot": 20,
       "symbol": "vkGetImageMemoryRequirements",
       "kind": "vulkan",
       "expected_original": "036042f9f00303aa00021fd600000000",
@@ -335,7 +349,7 @@
     },
     {
       "offset": 861584,
-      "slot": 20,
+      "slot": 21,
       "symbol": "vkBindImageMemory",
       "kind": "vulkan",
       "expected_original": "046442f9f00304aa00021fd600000000",
@@ -351,7 +365,7 @@
     },
     {
       "offset": 861648,
-      "slot": 21,
+      "slot": 22,
       "symbol": "vkCreateFence",
       "kind": "vulkan",
       "expected_original": "047042f9f00304aa00021fd600000000",
@@ -366,7 +380,7 @@
     },
     {
       "offset": 861664,
-      "slot": 22,
+      "slot": 23,
       "symbol": "vkDestroyFence",
       "kind": "vulkan",
       "expected_original": "037442f9f00303aa00021fd600000000",
@@ -381,7 +395,7 @@
     },
     {
       "offset": 861680,
-      "slot": 23,
+      "slot": 24,
       "symbol": "vkResetFences",
       "kind": "vulkan",
       "expected_original": "037842f9f00303aa00021fd600000000",
@@ -398,7 +412,7 @@
     },
     {
       "offset": 861712,
-      "slot": 24,
+      "slot": 25,
       "symbol": "vkWaitForFences",
       "kind": "vulkan",
       "expected_original": "058042f9f00305aa00021fd600000000",
@@ -413,7 +427,7 @@
     },
     {
       "offset": 861728,
-      "slot": 25,
+      "slot": 26,
       "symbol": "vkCreateSemaphore",
       "kind": "vulkan",
       "expected_original": "048442f9f00304aa00021fd600000000",
@@ -429,7 +443,7 @@
     },
     {
       "offset": 861744,
-      "slot": 26,
+      "slot": 27,
       "symbol": "vkDestroySemaphore",
       "kind": "vulkan",
       "expected_original": "038842f9f00303aa00021fd600000000",
@@ -445,7 +459,7 @@
     },
     {
       "offset": 861904,
-      "slot": 27,
+      "slot": 28,
       "symbol": "vkCreateBuffer",
       "kind": "vulkan",
       "expected_original": "04b042f9f00304aa00021fd600000000",
@@ -460,7 +474,7 @@
     },
     {
       "offset": 861920,
-      "slot": 28,
+      "slot": 29,
       "symbol": "vkDestroyBuffer",
       "kind": "vulkan",
       "expected_original": "03b442f9f00303aa00021fd600000000",
@@ -475,7 +489,7 @@
     },
     {
       "offset": 861968,
-      "slot": 29,
+      "slot": 30,
       "symbol": "vkCreateImage",
       "kind": "vulkan",
       "expected_original": "04c042f9f00304aa00021fd600000000",
@@ -490,7 +504,7 @@
     },
     {
       "offset": 861984,
-      "slot": 30,
+      "slot": 31,
       "symbol": "vkDestroyImage",
       "kind": "vulkan",
       "expected_original": "03c442f9f00303aa00021fd600000000",
@@ -505,7 +519,7 @@
     },
     {
       "offset": 862016,
-      "slot": 31,
+      "slot": 32,
       "symbol": "vkCreateImageView",
       "kind": "vulkan",
       "expected_original": "04cc42f9f00304aa00021fd600000000",
@@ -521,7 +535,7 @@
     },
     {
       "offset": 862032,
-      "slot": 32,
+      "slot": 33,
       "symbol": "vkDestroyImageView",
       "kind": "vulkan",
       "expected_original": "03d042f9f00303aa00021fd600000000",
@@ -537,7 +551,7 @@
     },
     {
       "offset": 862048,
-      "slot": 33,
+      "slot": 34,
       "symbol": "vkCreateShaderModule",
       "kind": "vulkan",
       "expected_original": "04d442f9f00304aa00021fd600000000",
@@ -557,7 +571,7 @@
     },
     {
       "offset": 862064,
-      "slot": 34,
+      "slot": 35,
       "symbol": "vkDestroyShaderModule",
       "kind": "vulkan",
       "expected_original": "03d842f9f00303aa00021fd600000000",
@@ -583,7 +597,7 @@
     },
     {
       "offset": 862224,
-      "slot": 35,
+      "slot": 36,
       "symbol": "vkCreateGraphicsPipelines",
       "kind": "vulkan",
       "expected_original": "060043f9f00306aa00021fd600000000",
@@ -598,7 +612,7 @@
     },
     {
       "offset": 862240,
-      "slot": 36,
+      "slot": 37,
       "symbol": "vkCreateComputePipelines",
       "kind": "vulkan",
       "expected_original": "060443f9f00306aa00021fd600000000",
@@ -614,7 +628,7 @@
     },
     {
       "offset": 862272,
-      "slot": 37,
+      "slot": 38,
       "symbol": "vkDestroyPipeline",
       "kind": "vulkan",
       "expected_original": "030c43f9f00303aa00021fd600000000",
@@ -632,7 +646,7 @@
     },
     {
       "offset": 862288,
-      "slot": 38,
+      "slot": 39,
       "symbol": "vkCreatePipelineLayout",
       "kind": "vulkan",
       "expected_original": "041043f9f00304aa00021fd600000000",
@@ -649,7 +663,7 @@
     },
     {
       "offset": 862304,
-      "slot": 39,
+      "slot": 40,
       "symbol": "vkDestroyPipelineLayout",
       "kind": "vulkan",
       "expected_original": "031443f9f00303aa00021fd600000000",
@@ -667,7 +681,7 @@
     },
     {
       "offset": 862320,
-      "slot": 40,
+      "slot": 41,
       "symbol": "vkCreateSampler",
       "kind": "vulkan",
       "expected_original": "041843f9f00304aa00021fd600000000",
@@ -683,7 +697,7 @@
     },
     {
       "offset": 862336,
-      "slot": 41,
+      "slot": 42,
       "symbol": "vkDestroySampler",
       "kind": "vulkan",
       "expected_original": "031c43f9f00303aa00021fd600000000",
@@ -698,7 +712,7 @@
     },
     {
       "offset": 862352,
-      "slot": 42,
+      "slot": 43,
       "symbol": "vkCreateDescriptorSetLayout",
       "kind": "vulkan",
       "expected_original": "042043f9f00304aa00021fd600000000",
@@ -716,7 +730,7 @@
     },
     {
       "offset": 862368,
-      "slot": 43,
+      "slot": 44,
       "symbol": "vkDestroyDescriptorSetLayout",
       "kind": "vulkan",
       "expected_original": "032443f9f00303aa00021fd600000000",
@@ -735,7 +749,7 @@
     },
     {
       "offset": 862384,
-      "slot": 44,
+      "slot": 45,
       "symbol": "vkCreateDescriptorPool",
       "kind": "vulkan",
       "expected_original": "042843f9f00304aa00021fd600000000",
@@ -750,7 +764,7 @@
     },
     {
       "offset": 862400,
-      "slot": 45,
+      "slot": 46,
       "symbol": "vkDestroyDescriptorPool",
       "kind": "vulkan",
       "expected_original": "032c43f9f00303aa00021fd600000000",
@@ -765,7 +779,7 @@
     },
     {
       "offset": 862432,
-      "slot": 46,
+      "slot": 47,
       "symbol": "vkAllocateDescriptorSets",
       "kind": "vulkan",
       "expected_original": "033443f9f00303aa00021fd600000000",
@@ -783,7 +797,7 @@
     },
     {
       "offset": 862448,
-      "slot": 47,
+      "slot": 48,
       "symbol": "vkFreeDescriptorSets",
       "kind": "vulkan",
       "expected_original": "043843f9f00304aa00021fd600000000",
@@ -802,7 +816,7 @@
     },
     {
       "offset": 862464,
-      "slot": 48,
+      "slot": 49,
       "symbol": "vkUpdateDescriptorSets",
       "kind": "vulkan",
       "expected_original": "053c43f9f00305aa00021fd600000000",
@@ -820,7 +834,7 @@
     },
     {
       "offset": 862480,
-      "slot": 49,
+      "slot": 50,
       "symbol": "vkCreateFramebuffer",
       "kind": "vulkan",
       "expected_original": "044043f9f00304aa00021fd600000000",
@@ -835,7 +849,7 @@
     },
     {
       "offset": 862496,
-      "slot": 50,
+      "slot": 51,
       "symbol": "vkDestroyFramebuffer",
       "kind": "vulkan",
       "expected_original": "034443f9f00303aa00021fd600000000",
@@ -850,7 +864,7 @@
     },
     {
       "offset": 862512,
-      "slot": 51,
+      "slot": 52,
       "symbol": "vkCreateRenderPass",
       "kind": "vulkan",
       "expected_original": "044843f9f00304aa00021fd600000000",
@@ -866,7 +880,7 @@
     },
     {
       "offset": 862528,
-      "slot": 52,
+      "slot": 53,
       "symbol": "vkDestroyRenderPass",
       "kind": "vulkan",
       "expected_original": "034c43f9f00303aa00021fd600000000",
@@ -882,7 +896,7 @@
     },
     {
       "offset": 862576,
-      "slot": 53,
+      "slot": 54,
       "symbol": "vkCreateCommandPool",
       "kind": "vulkan",
       "expected_original": "045843f9f00304aa00021fd600000000",
@@ -897,7 +911,7 @@
     },
     {
       "offset": 862592,
-      "slot": 54,
+      "slot": 55,
       "symbol": "vkDestroyCommandPool",
       "kind": "vulkan",
       "expected_original": "035c43f9f00303aa00021fd600000000",
@@ -912,7 +926,7 @@
     },
     {
       "offset": 862624,
-      "slot": 55,
+      "slot": 56,
       "symbol": "vkAllocateCommandBuffers",
       "kind": "vulkan",
       "expected_original": "036443f9f00303aa00021fd600000000",
@@ -927,7 +941,7 @@
     },
     {
       "offset": 862656,
-      "slot": 56,
+      "slot": 57,
       "symbol": "vkBeginCommandBuffer",
       "kind": "vulkan",
       "expected_original": "020840f9426c43f9f00302aa00021fd6",
@@ -944,7 +958,7 @@
     },
     {
       "offset": 862672,
-      "slot": 57,
+      "slot": 58,
       "symbol": "vkEndCommandBuffer",
       "kind": "vulkan",
       "expected_original": "010840f9217043f9f00301aa00021fd6",
@@ -962,7 +976,7 @@
     },
     {
       "offset": 862688,
-      "slot": 58,
+      "slot": 59,
       "symbol": "vkResetCommandBuffer",
       "kind": "vulkan",
       "expected_original": "020840f9427443f9f00302aa00021fd6",
@@ -979,7 +993,7 @@
     },
     {
       "offset": 862704,
-      "slot": 59,
+      "slot": 60,
       "symbol": "vkCmdBindPipeline",
       "kind": "vulkan",
       "expected_original": "030840f9637843f9f00303aa00021fd6",
@@ -997,7 +1011,7 @@
     },
     {
       "offset": 862752,
-      "slot": 60,
+      "slot": 61,
       "symbol": "vkCmdSetViewport",
       "kind": "vulkan",
       "expected_original": "040840f9848443f9f00304aa00021fd6",
@@ -1013,7 +1027,7 @@
     },
     {
       "offset": 862768,
-      "slot": 61,
+      "slot": 62,
       "symbol": "vkCmdSetScissor",
       "kind": "vulkan",
       "expected_original": "040840f9848843f9f00304aa00021fd6",
@@ -1029,7 +1043,7 @@
     },
     {
       "offset": 862896,
-      "slot": 62,
+      "slot": 63,
       "symbol": "vkCmdBindDescriptorSets",
       "kind": "vulkan",
       "expected_original": "080840f908a943f9f00308aa00021fd6",
@@ -1046,7 +1060,7 @@
     },
     {
       "offset": 862912,
-      "slot": 63,
+      "slot": 64,
       "symbol": "vkCmdBindIndexBuffer",
       "kind": "vulkan",
       "expected_original": "040840f984ac43f9f00304aa00021fd6",
@@ -1061,7 +1075,7 @@
     },
     {
       "offset": 862928,
-      "slot": 64,
+      "slot": 65,
       "symbol": "vkCmdBindVertexBuffers",
       "kind": "vulkan",
       "expected_original": "050840f9a5b043f9f00305aa00021fd6",
@@ -1076,7 +1090,7 @@
     },
     {
       "offset": 862944,
-      "slot": 65,
+      "slot": 66,
       "symbol": "vkCmdDraw",
       "kind": "vulkan",
       "expected_original": "050840f9a5b443f9f00305aa00021fd6",
@@ -1091,7 +1105,7 @@
     },
     {
       "offset": 862960,
-      "slot": 66,
+      "slot": 67,
       "symbol": "vkCmdDrawIndexed",
       "kind": "vulkan",
       "expected_original": "060840f9c6b843f9f00306aa00021fd6",
@@ -1106,7 +1120,7 @@
     },
     {
       "offset": 863040,
-      "slot": 67,
+      "slot": 68,
       "symbol": "vkCmdDispatch",
       "kind": "vulkan",
       "expected_original": "040840f984cc43f9f00304aa00021fd6",
@@ -1122,7 +1136,7 @@
     },
     {
       "offset": 863184,
-      "slot": 68,
+      "slot": 69,
       "symbol": "vkCmdCopyBufferToImage",
       "kind": "vulkan",
       "expected_original": "060840f9c6f043f9f00306aa00021fd6",
@@ -1138,7 +1152,7 @@
     },
     {
       "offset": 863200,
-      "slot": 69,
+      "slot": 70,
       "symbol": "vkCmdCopyImageToBuffer",
       "kind": "vulkan",
       "expected_original": "060840f9c6f443f9f00306aa00021fd6",
@@ -1154,7 +1168,7 @@
     },
     {
       "offset": 863344,
-      "slot": 70,
+      "slot": 71,
       "symbol": "vkCmdClearAttachments",
       "kind": "vulkan",
       "expected_original": "050840f9a51844f9f00305aa00021fd6",
@@ -1169,7 +1183,7 @@
     },
     {
       "offset": 863424,
-      "slot": 71,
+      "slot": 72,
       "symbol": "vkCmdPipelineBarrier",
       "kind": "vulkan",
       "expected_original": "080840f9082d44f9f00308aa00021fd6",
@@ -1191,7 +1205,7 @@
     },
     {
       "offset": 863568,
-      "slot": 72,
+      "slot": 73,
       "symbol": "vkCmdPushConstants",
       "kind": "vulkan",
       "expected_original": "060840f9c65044f9f00306aa00021fd6",
@@ -1209,7 +1223,7 @@
     },
     {
       "offset": 863584,
-      "slot": 73,
+      "slot": 74,
       "symbol": "vkCmdBeginRenderPass",
       "kind": "vulkan",
       "expected_original": "030840f9635444f9f00303aa00021fd6",
@@ -1226,7 +1240,7 @@
     },
     {
       "offset": 863616,
-      "slot": 74,
+      "slot": 75,
       "symbol": "vkCmdEndRenderPass",
       "kind": "vulkan",
       "expected_original": "010840f9215c44f9f00301aa00021fd6",
@@ -1243,7 +1257,7 @@
     },
     {
       "offset": 863776,
-      "slot": 75,
+      "slot": 76,
       "symbol": "vkDestroySurfaceKHR",
       "kind": "vulkan",
       "expected_original": "038c40f9f00303aa00021fd600000000",
@@ -1258,7 +1272,7 @@
     },
     {
       "offset": 863792,
-      "slot": 76,
+      "slot": 77,
       "symbol": "vkGetPhysicalDeviceSurfaceSupportKHR",
       "kind": "vulkan",
       "expected_original": "04e849f9f00304aa00021fd600000000",
@@ -1273,7 +1287,7 @@
     },
     {
       "offset": 863808,
-      "slot": 77,
+      "slot": 78,
       "symbol": "vkGetPhysicalDeviceSurfaceCapabilitiesKHR",
       "kind": "vulkan",
       "expected_original": "03ec49f9f00303aa00021fd600000000",
@@ -1288,7 +1302,7 @@
     },
     {
       "offset": 863824,
-      "slot": 78,
+      "slot": 79,
       "symbol": "vkGetPhysicalDeviceSurfaceFormatsKHR",
       "kind": "vulkan",
       "expected_original": "04f049f9f00304aa00021fd600000000",
@@ -1304,7 +1318,7 @@
     },
     {
       "offset": 863856,
-      "slot": 79,
+      "slot": 80,
       "symbol": "vkCreateSwapchainKHR",
       "kind": "vulkan",
       "expected_original": "046844f9f00304aa00021fd600000000",
@@ -1319,7 +1333,7 @@
     },
     {
       "offset": 863872,
-      "slot": 80,
+      "slot": 81,
       "symbol": "vkDestroySwapchainKHR",
       "kind": "vulkan",
       "expected_original": "036c44f9f00303aa00021fd600000000",
@@ -1334,7 +1348,7 @@
     },
     {
       "offset": 863888,
-      "slot": 81,
+      "slot": 82,
       "symbol": "vkGetSwapchainImagesKHR",
       "kind": "vulkan",
       "expected_original": "047044f9f00304aa00021fd600000000",
@@ -1350,7 +1364,7 @@
     },
     {
       "offset": 863904,
-      "slot": 82,
+      "slot": 83,
       "symbol": "vkAcquireNextImageKHR",
       "kind": "vulkan",
       "expected_original": "067444f9f00306aa00021fd600000000",
@@ -1365,7 +1379,7 @@
     },
     {
       "offset": 863920,
-      "slot": 83,
+      "slot": 84,
       "symbol": "vkQueuePresentKHR",
       "kind": "vulkan",
       "expected_original": "020840f9427844f9f00302aa00021fd6",
@@ -1380,7 +1394,7 @@
     },
     {
       "offset": 863936,
-      "slot": 84,
+      "slot": 85,
       "symbol": "vkCreateViSurfaceNN",
       "kind": "vulkan",
       "expected_original": "049040f9f00304aa00021fd600000000",
@@ -1395,7 +1409,7 @@
     },
     {
       "offset": 864352,
-      "slot": 85,
+      "slot": 86,
       "symbol": "vkGetPhysicalDeviceProperties2",
       "kind": "vulkan",
       "expected_original": "021c4af9f00302aa00021fd600000000",
@@ -1410,7 +1424,7 @@
     },
     {
       "offset": 873280,
-      "slot": 86,
+      "slot": 87,
       "symbol": "vkCreateInstance",
       "kind": "vulkan",
       "expected_original": "58820014000000000000000000000000",
@@ -1424,7 +1438,7 @@
     },
     {
       "offset": 873312,
-      "slot": 87,
+      "slot": 88,
       "symbol": "vkEnumerateInstanceExtensionProperties",
       "kind": "vulkan",
       "expected_original": "3c820014000000000000000000000000",

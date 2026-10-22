@@ -165,6 +165,42 @@ def guest_startup_result(report):
     return True
 
 
+def game_compute_smoke(nro, mvk, output, logs, env):
+    from game_shader_smoke import EXPECTED
+    destination = Path(output) / "game-compute"
+    driver_log = Path(logs) / "game-compute-driver.log"
+    driver_log.parent.mkdir(parents=True, exist_ok=True)
+    command = [str(sys.executable), str(ROOT / "tools/game_shader_smoke.py"),
+               "--nro", str(nro), "--moltenvk-root", str(mvk),
+               "--out", str(destination), "--logs", str(logs)]
+    try:
+        with driver_log.open("w", encoding="utf-8") as log:
+            completed = subprocess.run(command, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=600)
+    finally:
+        result_path = destination / "result.json"
+        if result_path.is_file():
+            shutil.copyfile(result_path, Path(logs) / "game-compute.json")
+    if not result_path.is_file():
+        raise ValueError("Game compute probe produced no result; see game-compute-driver.log")
+    result = json.loads(result_path.read_text(encoding="utf-8"))
+    if result.get("source_nro_sha256") != PINNED_SHA256:
+        raise ValueError("Game compute result belongs to a different guest")
+    pipelines = result.get("pipeline_results", [])
+    if completed.returncode == 77:
+        if (result.get("status") != "skipped" or result.get("verified") is not False or
+                result.get("native_exit_code") != 77 or result.get("reason") != "runner_gpu_unavailable" or
+                result.get("native_skip_reason") not in {"incompatible_vulkan_driver", "zero_physical_devices", "no_graphics_compute_queue"} or pipelines):
+            raise ValueError("Game compute skip lacks strict no-GPU evidence")
+    elif (completed.returncode != 0 or result.get("status") != "passed" or result.get("verified") is not True or
+            result.get("native_exit_code") != 0 or len(pipelines) != 2 or
+            {item.get("sha256") for item in pipelines} != set(EXPECTED) or
+            any(item.get("pipeline_created") is not True or item.get("stage") != "comp" or
+                item.get("entry_point") != "main" or
+                item.get("role") != EXPECTED.get(item.get("sha256"), {}).get("role") for item in pipelines)):
+        raise ValueError("Both real game compute pipelines were not verified; see game-compute-run.log")
+    return result
+
+
 def macho_sections(data):
     """Parse a thin arm64 executable's segment/section table without macOS tools."""
     if len(data) < 32:
@@ -276,6 +312,7 @@ def build(args):
         env=env, log=logs / "guest-macos-driver.log")
     guest_smoke = json.loads((logs / "guest-macos.json").read_text(encoding="utf-8"))
     startup_verified = guest_startup_result(guest_smoke)
+    game_compute = game_compute_smoke(args.nro.resolve(), mvk, output, logs, env)
     ios = output / "ios"
     run(["xcodegen", "generate", "--spec", ios / "project.yml"], cwd=ios, env=env, log=logs / "xcodegen.log")
     run(["xcodebuild", "-project", ios / "Biko3.xcodeproj", "-scheme", "Biko3", "-configuration", "Release",
@@ -294,6 +331,7 @@ def build(args):
               "vulkan_bridge_syntax_checked": True, "vulkan_gpu_smoke_verified": gpu_smoke["verified"],
               "vulkan_gpu_smoke": gpu_smoke, "notices": notice_report,
               "macos_guest_startup_verified": startup_verified, "macos_guest_smoke": guest_smoke,
+              "game_compute_pipelines_verified": game_compute["verified"], "game_compute_pipelines": game_compute,
               "moltenvk_archive_sha256": MVK_SHA256, "ipa_bytes": ipa.stat().st_size,
               "ipa_sha256": sha256(ipa), **app_report}
     (output / "build-report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
