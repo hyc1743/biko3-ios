@@ -29,7 +29,7 @@ APP_ICON_PATH = "ios/Assets.xcassets/AppIcon.appiconset/AppIcon.png"
 # Exact user-supplied artwork resized to an opaque 1024px app icon.
 APP_ICON_SHA256 = "fc52f433c0ab7b0d537f3bae46a9b4c2887212e0246b71ad913e39440c084c47"
 LOCALIZATION_PATCH_PATH = "ios/localization/patch.pp"
-LOCALIZATION_PATCH_SHA256 = "c01589312262a1faa4bce91698d2721538f21a1e830a98c42e4cd5aafedd4b8e"
+LOCALIZATION_PATCH_SHA256 = "31d06a823a9bb6eb5b155612cd94debd86e3aa7496a9d0938f2f2c7795c3649c"
 
 
 def git_executable():

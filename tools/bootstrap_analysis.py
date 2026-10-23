@@ -28,7 +28,8 @@ import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REPOS = ("jhaizhou-ops/d2r-mobile", "seedds/nxnative", "LNPANDY/nxnative-romfs-archive")
+REPOS = ("jhaizhou-ops/d2r-mobile", "seedds/nxnative", "LNPANDY/nxnative-romfs-archive",
+         "ruje0504-2/biko3-switch-runtime")
 SOURCE_SUFFIXES = {".md", ".txt", ".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp",
                    ".m", ".mm", ".swift", ".s", ".rs", ".py", ".sh", ".ps1", ".bat",
                    ".cmake", ".toml", ".json", ".yaml", ".yml", ".metal", ".glsl", ".vert",

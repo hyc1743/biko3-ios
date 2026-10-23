@@ -272,8 +272,18 @@ def inspect_app(app, stage):
     primary_icon = info.get("CFBundleIcons", {}).get("CFBundlePrimaryIcon", {})
     if primary_icon.get("CFBundleIconName") != "AppIcon" or not (app / "Assets.car").is_file():
         raise ValueError("The compiled application icon is missing")
+    localization = stage.get("localization_patch", {"included": False})
+    bundled_patch = app / "dm/localization/patch.pp"
+    if localization.get("included"):
+        if (not bundled_patch.is_file() or bundled_patch.is_symlink()
+                or bundled_patch.stat().st_size != localization.get("bytes")
+                or sha256(bundled_patch) != localization.get("sha256")):
+            raise ValueError("Compiled localization patch does not match staged identity")
+    elif bundled_patch.exists():
+        raise ValueError("Unrecorded localization patch in app bundle")
     return {"bundle_id": info["CFBundleIdentifier"], "minimum_ios": "26.0", "arm64": True,
             "app_icon": "AppIcon",
+            "localization_patch": localization,
             "guest_sections": {",".join(key): sections[key]["size"] for key in required},
             "executable_sha256": hashlib.sha256(data).hexdigest()}
 
@@ -354,7 +364,9 @@ def build(args):
     ipa = output / "Biko3-development.ipa"
     package(app, ipa)
     report = {"kind": "development-guest-ipa", "signed": False, "runtime_verified": False,
-              "playable_verified": False, "contains_guest_executable": True, "contains_game_data": False,
+              "playable_verified": False, "contains_guest_executable": True,
+              "contains_game_data": bool(stage.get("localization_patch", {}).get("included")),
+              "contains_full_game_data": False,
               "data_import": "Documents/game/Data", "resource_pack_import": True,
               "resource_import_smoke": resource_import,
               "resource_pack_manifest_sha256": sha256(ROOT / "ios/resources/Biko3Data.manifest.json"),

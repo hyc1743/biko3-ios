@@ -55,3 +55,27 @@ class LocalizationRenderingTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LocalizationCatalogTests(unittest.TestCase):
+    def test_catalog_stays_in_sync_with_merged_manifest(self):
+        """The shipped ja-zh-CN.json must equal the tool output for the
+        merged manifest: every replacement hash-bound and name-preserved."""
+        import json
+        from sync_localization_catalog import sync, CATALOG, PRESERVED_NAMES
+        manifest = ROOT / "out/localization-104-v1/replacements/replacements.json"
+        if not manifest.is_file():
+            self.skipTest("merged localization manifest not present")
+        expected = sync(manifest)
+        current = json.loads(CATALOG.read_text(encoding="utf-8"))
+        self.assertEqual(current, expected)
+
+    def test_merged_replacements_never_include_preserved_names(self):
+        import json
+        from sync_localization_catalog import PRESERVED_NAMES
+        manifest = ROOT / "out/localization-104-v1/replacements/replacements.json"
+        if not manifest.is_file():
+            self.skipTest("merged localization manifest not present")
+        rows = json.loads(manifest.read_text(encoding="utf-8"))["replacements"]
+        names = {row["archive"] + "." + row["name"] for row in rows}
+        self.assertTrue(names.isdisjoint("bk3_00." + name for name in PRESERVED_NAMES))

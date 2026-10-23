@@ -15,6 +15,8 @@
 
 首次安装下载六个资源分卷即可，无需下载源码、安装 Python 或自行打包。已导入过资源的玩家更新 IPA 后可以继续使用原有数据，无需重复下载。
 
+2026-10-23 已核对 Switch 上游：现用 1.0.79 程序与原补丁均匹配上游公布的 SHA-256，六个资源分卷及全部 169 个源文件校验通过。近期上游主要新增 Linux / Steam 支持，未发现新增剧情或关卡资源，本次无需更换分卷。核对范围见[上游更新记录](docs/upstream-status.md)。
+
 ### 1. 下载全部六个分卷
 
 在 [dev.3 的 Assets 列表](https://github.com/hyc1743/biko3-ios/releases/tag/v0.1.0-dev.3) 中下载以下文件，也可以点击表内链接：
@@ -103,6 +105,7 @@ v0.1.1 自动读取现有资源中的 `game/Data/patch.pp`，无需单独下载�
 
 感谢以下项目及其贡献者：
 
+- [ruje0504-2/biko3-switch-runtime](https://github.com/ruje0504-2/biko3-switch-runtime)：原 Switch 原生移植上游，本项目所用游戏运行程序、资源加载与 Switch 功能实现的来源；感谢作者及贡献者的移植与维护工作。
 - 原中文补丁作者及汉化组：本版直接使用资源中已有的剧本、字体与图片补丁，保留补丁中的原始署名。
 
 - [seedds/nxnative](https://github.com/seedds/nxnative)：本项目使用的原生宿主、指令改写工具、平台服务及触控／手柄前端的基础。

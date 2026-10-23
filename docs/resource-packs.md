@@ -69,6 +69,8 @@ python tools/pack_resources.py restore --parts out/resource-packs --out out/rest
 
 ## 已生成的这一套分卷
 
+2026-10-23 已按 [Switch 上游核对记录](upstream-status.md) 复核：本地程序与原补丁均匹配上游公布的版本；六个分卷和 169 个源文件全部通过大小、SHA-256 与布局校验。未发现可下载的新游戏资源，本次保留原分卷与内置清单，已有用户无需重新下载。
+
 本地目录：`out/resource-packs/`。共 169 个文件，原始数据总长 2,982,621,688 字节。
 前五卷每卷 536,870,912 字节，最后一卷 298,267,128 字节。
 

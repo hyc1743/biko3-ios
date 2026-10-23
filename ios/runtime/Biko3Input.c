@@ -1,6 +1,7 @@
 /* Convert the existing touch/GameController front end to the exact 48-byte
  * Biko3 state observed in original a5a90 and its a5890 button mapper. */
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include "Biko3Libnx.h"
 
@@ -30,6 +31,21 @@ int Biko3InputSnapshot(void *output) {
     int32_t x = 0, y = 0;
     memcpy(&x, touch + 0x20, sizeof x);
     memcpy(&y, touch + 0x24, sizeof y);
+    /* Trace input delivery when the probe trace is enabled: what the game
+     * reads each poll, so menu automation can be verified without screenshots. */
+    static uint64_t last_buttons = UINT64_MAX;
+    static int last_touching = -1;
+    static int32_t last_x = -1, last_y = -1;
+    if (getenv("BIKO3_PROBE_TRACE")) {
+        uint32_t mapped = biko3_map_buttons(buttons);
+        if (mapped != last_buttons || (count != 0) != last_touching ||
+                (count && (x != last_x || y != last_y))) {
+            fprintf(stderr, "[biko3-probe] input buttons=%#llx mapped=%#x touch=%d x=%d y=%d\n",
+                    (unsigned long long)buttons, mapped, count != 0, x, y);
+            last_buttons = mapped; last_touching = count != 0;
+            last_x = x; last_y = y;
+        }
+    }
     /* The original poll reports panel pixels as floats, not normalized UVs.
      * Its no-touch fallback is exactly (320,240). */
     biko3_input_update(biko3_map_buttons(buttons),

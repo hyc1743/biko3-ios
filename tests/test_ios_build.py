@@ -129,6 +129,19 @@ class IosBuildTests(unittest.TestCase):
             report = inspect_app(app, stage)
             self.assertTrue(report["arm64"])
             self.assertEqual(len(report["guest_sections"]), 3)
+            localized = app / "dm/localization/patch.pp"
+            localized.parent.mkdir(parents=True)
+            localized.write_bytes(b"reviewed patch fixture")
+            import hashlib
+            localization = {"included": True, "bytes": localized.stat().st_size,
+                            "sha256": hashlib.sha256(localized.read_bytes()).hexdigest()}
+            with self.assertRaisesRegex(ValueError, "Unrecorded localization"):
+                inspect_app(app, stage)
+            self.assertEqual(inspect_app(app, dict(stage, localization_patch=localization))["localization_patch"], localization)
+            localized.write_bytes(b"corrupt")
+            with self.assertRaisesRegex(ValueError, "localization patch"):
+                inspect_app(app, dict(stage, localization_patch=localization))
+            localized.unlink()
             (app / "Assets.car").unlink()
             with self.assertRaisesRegex(ValueError, "application icon"):
                 inspect_app(app, stage)

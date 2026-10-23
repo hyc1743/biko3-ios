@@ -190,7 +190,7 @@ def probe(args):
             try:
                 process = subprocess.Popen([str(host / "dmhost"), str(copied_bindings)], cwd=private,
                                            env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
-                running_since, next_shot = time.monotonic(), 20
+                running_since, next_shot = time.monotonic(), args.shot_interval
                 while process.poll() is None:
                     elapsed = time.monotonic() - running_since
                     if elapsed >= args.seconds:
@@ -199,7 +199,7 @@ def probe(args):
                     if elapsed >= next_shot:
                         path = evidence / f"screen-{next_shot:03d}.png"
                         if screenshot(path, env, min(5, args.seconds - elapsed)): shots.append(path.name)
-                        next_shot += 20
+                        next_shot += args.shot_interval
                     time.sleep(0.25)
             finally:
                 if process is not None: stop_process(process)
@@ -238,6 +238,7 @@ def main(argv=None):
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--keys", default=DEFAULT_KEYS)
     parser.add_argument("--seconds", type=int, choices=(60, 90), default=90)
+    parser.add_argument("--shot-interval", type=int, default=20, help="Screenshot interval in seconds")
     parser.add_argument("--download-parts", action="store_true", help="Fetch fixed v0.1.0-dev.3 parts and verify pinned size/SHA256")
     result = probe(parser.parse_args(argv))
     print(json.dumps(result, indent=2))
