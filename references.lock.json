@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "repositories": {
+    "ruje0504-2/biko3-switch-runtime": "63fddc3830b991e725657689934c3b6e3b5786bb",
+    "jhaizhou-ops/d2r-mobile": "53e7c5bb9ca3ea53e2160005be8fbe920cd9cb53",
+    "seedds/nxnative": "677345b0933f5f8754aeec3125d14df32683ca97",
+    "LNPANDY/nxnative-romfs-archive": "d02a01738237d5c6f5f52c43348c42e5f9d50037"
+  }
+}

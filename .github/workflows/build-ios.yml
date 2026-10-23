@@ -1,0 +1,85 @@
+name: Build Biko3 development IPA
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: biko3-ios-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Portable regression tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install analysis and transport dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run all portable tests
+        run: python -m unittest discover -s tests -v
+
+  ios:
+    name: Compile actual embedded guest for iOS
+    needs: test
+    runs-on: macos-26
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate configured guest input
+        env:
+          BIKO3_GUEST_KEY: ${{ secrets.BIKO3_GUEST_KEY }}
+        run: |
+          if [ -z "$BIKO3_GUEST_KEY" ]; then
+            echo "::error::Missing Actions secret BIKO3_GUEST_KEY. A real guest build is required."
+            exit 1
+          fi
+          test -s ci-inputs/guest.enc
+      - name: Install build dependencies
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+          brew install xcodegen
+          python -m pip install -r requirements.txt
+      - name: Authenticate and decrypt the pinned guest executable
+        env:
+          BIKO3_GUEST_KEY: ${{ secrets.BIKO3_GUEST_KEY }}
+        run: python tools/ci_guest.py open ci-inputs/guest.enc "$RUNNER_TEMP/biko3-guest.nro"
+      - name: Fetch pinned source references without Windows analysis dependencies
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/bootstrap_analysis.py --task references
+      - name: Stage, compile and inspect actual guest IPA
+        run: python tools/build_ios.py --nro "$RUNNER_TEMP/biko3-guest.nro" --output out/biko3-ios
+      - name: Upload development IPA and sanitized build report
+        uses: actions/upload-artifact@v4
+        with:
+          name: Biko3-development-IPA
+          path: |
+            out/biko3-ios/Biko3-development.ipa
+            out/biko3-ios/build-report.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Biko3-build-logs
+          path: |
+            out/biko3-ios/logs/*.log
+            out/biko3-ios/logs/*.json
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Remove decrypted input
+        if: always()
+        run: rm -f "$RUNNER_TEMP/biko3-guest.nro"

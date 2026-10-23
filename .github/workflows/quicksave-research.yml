@@ -1,0 +1,74 @@
+name: Quicksave research - real game observation
+
+on:
+  push:
+    branches: [quicksave-research]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quicksave-research-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -v
+
+  observe:
+    needs: test
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare host dependencies
+        run: |
+          xcodebuild -version
+          python -m pip install -r requirements.txt
+      - name: Authenticate pinned research guest
+        env:
+          BIKO3_GUEST_KEY: ${{ secrets.BIKO3_GUEST_KEY }}
+        run: |
+          if [ -z "$BIKO3_GUEST_KEY" ]; then
+            echo "::error::Missing BIKO3_GUEST_KEY"
+            exit 1
+          fi
+          python tools/ci_guest.py open ci-inputs/guest.enc "$RUNNER_TEMP/research-guest.nro"
+      - name: Fetch fixed source references
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/bootstrap_analysis.py --task references
+      - name: Generate research-only staged host and observation hook
+        run: |
+          mkdir -p out/research-setup-evidence
+          python tools/stage_ios.py --nxnative-root references/seedds--nxnative --nro "$RUNNER_TEMP/research-guest.nro" --out out/research-staged --prepare-only --quicksave-probe > out/research-setup-evidence/stage.log 2>&1
+          python -c "import sys; from pathlib import Path; sys.path.insert(0, 'tools'); from build_ios import moltenvk; path = moltenvk(Path('.tools/moltenvk-1.4.2')); Path('.tools/research-moltenvk-path.txt').write_text(str(path), encoding='utf-8')" > out/research-setup-evidence/moltenvk.log 2>&1
+      - name: Restore six verified dev.3 parts and observe original game
+        run: |
+          python tools/mac_gameplay_probe.py --staged out/research-staged --moltenvk-root "$(cat .tools/research-moltenvk-path.txt)" --parts "$RUNNER_TEMP/research-parts" --download-parts --out out/gameplay-probe --seconds 90 --shot-interval 5 --keys '3:Down,4:Down,6:A,16:B,23:Down,24:Down,25:Down,26:Down,28:A,38:B,45:Down,46:Up,48:A,58:B'
+      - name: Retain only bounded research evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quicksave-research-evidence
+          path: |
+            out/research-setup-evidence/*.log
+            out/gameplay-probe/evidence/*.log
+            out/gameplay-probe/evidence/*.json
+            out/gameplay-probe/evidence/*.png
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Remove temporary decrypted guest
+        if: always()
+        run: rm -f "$RUNNER_TEMP/research-guest.nro"

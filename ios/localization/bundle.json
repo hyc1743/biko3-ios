@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "file": "patch.pp",
+  "bytes": 42237922,
+  "sha256": "e2d115335d47dc33f1b76dc480a615e5dc234fbad07cecda505be63cddf70032",
+  "base_patch_sha256": "5aa69af72f240d6cf2fa1d12293564256bef120b1c1a70cb210e597927df9f42",
+  "reviewed": true,
+  "review_scope": "20 textures passed static comparison; remaining 84 passed user visual review; iPhone runtime and upgrade installation unverified",
+  "replacement_count": 104,
+  "preserve_japanese_character_names": true,
+  "complete_localization": false,
+  "runtime_verified": false
+}
