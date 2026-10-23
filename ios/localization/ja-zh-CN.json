@@ -1,0 +1,999 @@
+{
+  "schema": 1,
+  "scope": "Translate remaining Japanese only; preserve other languages and existing Chinese",
+  "runtime_verified": false,
+  "preserve_japanese_character_names": true,
+  "preserved_name_resources": [
+    "al_05.tga",
+    "al_06.tga",
+    "al_07.tga",
+    "al_08.tga",
+    "pr_13.tga",
+    "pr_15.tga",
+    "pr_18.tga",
+    "pr_20.tga"
+  ],
+  "entries": [
+    {
+      "archive": "bk3_00",
+      "name": "al_11.tga",
+      "effective_sha256": "234e9ed0c05690563bf904adebb46a863ea8338208d9d5542c8b4b23865e1840",
+      "replacement_sha256": "bf31329f9b0df83476460da789816d6e0f54c9fbf71774e7a1bcd971354e834a",
+      "translation": "幻灯片播放",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "al_12.tga",
+      "effective_sha256": "27c9f80583ed1b65b6436a9fd18e0902fa74ad8661d8ef7b77320f7706250f6c",
+      "replacement_sha256": "070bf9993f749e395dc7651e0813ca1403154f0ffdbd1875c1fc29fdb84c027d",
+      "translation": "幻灯片播放",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "al_13.tga",
+      "effective_sha256": "78fd70407d081c2f32e06a26970006fdd8e382a4d68e130eb6c7978e20543fba",
+      "replacement_sha256": "31b1ed209f2bbb5428d148ffbef3d5b585a3bfe6c78625c1c7f39970d67bdfbe",
+      "translation": "删除",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "al_14.tga",
+      "effective_sha256": "0bc78b9c9afecf63e2f1c18eafd5e34cec3ab7c1d3ae68458d4c91a823e0774e",
+      "replacement_sha256": "a5287bfdc0f0393aee64878f3723d9e5917f1878e2a7eb3b9a7969d6c558a2b7",
+      "translation": "删除",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "al_31.tga",
+      "effective_sha256": "c2e22512d44f1a04417fc106cca11a35a885349e4118a20c611750b6220ce57c",
+      "replacement_sha256": "7264a87e7c290da06a9a56b7fd201b6917af98e62c9710f6387126f8aaa1dfb0",
+      "translation": "注意：游戏所在磁盘空间不足时，相册功能可能无法使用。",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "ex_00.bmp",
+      "effective_sha256": "dc50bf73c69291b62d7f2e25316b6a958be1042154f79db6f0f175664846e6db",
+      "replacement_sha256": "ff922b60d71c2bfbcb11d1ecf535fa19c25d92e58f985badf8acc2c94fccaa22",
+      "translation": [
+        "H重放  CG鉴赏"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "ex_23.tga",
+      "effective_sha256": "5bb614968b555fa969a847d842dea3cd10aa3678d65846a253ccbc7ecbfea8d0",
+      "replacement_sha256": "9adb7a3e78727639c5713a1f20ee9c0a195febecd8d07c530eae34af47bb6d19",
+      "translation": "未体验",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "ex_24.tga",
+      "effective_sha256": "343e469a9faf03511ef9a911745d72b423cba11aa62e20c7ea36c361d90e7fb9",
+      "replacement_sha256": "17954b66db8ae2e89326d69f17ca9b83832ed9d8f5119327248f7c2c238cac76",
+      "translation": "未体验",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "ex_25.tga",
+      "effective_sha256": "cab5b3c738d20570df4d5f5cf2880d54d63212ea8a82e056c87d4f36cc97140c",
+      "replacement_sha256": "526431b0437280023c625902695d1a50cad7a52fabf992ea508490ef87ab647d",
+      "translation": [
+        "即时演出"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "ex_26.tga",
+      "effective_sha256": "a2d3b29c8dd62d1496fac1a25281bb48bfc95c579ae90858783829c4e08f902c",
+      "replacement_sha256": "407730cfc0f224cc482329368b4c2afb8f002b65717be575e6a86d360f9ed857",
+      "translation": [
+        "即时演出"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "ex_27.tga",
+      "effective_sha256": "9a1c86eec811523f4662d01cc17dd4c42c91f9dd7686ab8d6a99d89553d46b22",
+      "replacement_sha256": "cb761ae82d42644ce2e74f1f537459150ad559fc208465ea273f01b5423a4123",
+      "translation": [
+        "即时演出"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "ex_28.tga",
+      "effective_sha256": "dd2dd624be13ceaef15a3c49675ad061e3af93addb3e6f4595e999ac604f8850",
+      "replacement_sha256": "a6cd36c5b9fcdb21d5dc25b3b038f7751fae697c9dc3e8a521fa3a57b4c1b37f",
+      "translation": [
+        "即时演出"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "ex_29.tga",
+      "effective_sha256": "f286967d13d9c9df8bab9252d8dd8a1993adfdb198e60dc58ce81a9a9e6956cb",
+      "replacement_sha256": "6fa72316c0b44410bbbdcd8dfbcc6627f60f9769ad4b973015fda60ec87ae84c",
+      "translation": [
+        "即时演出"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_09.tga",
+      "effective_sha256": "32b76ecd806263289aa6516b38ba7b2f6d3419d1f2f05cf668ceaaf2fac0a100",
+      "replacement_sha256": "f775fae77bf7571a47f91362d739aa88fb0b86ebac6c7c767f9e8107a01625cd",
+      "translation": [
+        "旋转"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_105.tga",
+      "effective_sha256": "ab6f43225a66179813a0de31c5c978cb455af613cab436afe5b407d1bcc6f89c",
+      "replacement_sha256": "5daa7eca7b1caa6fcaeb96d0139a11f2eef9e5b8fa18c6c41f4efc6d7db6e041",
+      "translation": [
+        "拔出",
+        "插入"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_11.tga",
+      "effective_sha256": "9227944771d0d313648059bdd7406dd835be6c2c2df3400307afda51292d4ddf",
+      "replacement_sha256": "77c69d46f142207b42c89b5adb3d44ecb19de84dbb62134b36ffb5440104eae8",
+      "translation": "切换视角",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_12.tga",
+      "effective_sha256": "ba738b8c5fc01968b264d2f378ea5e9acf088c97ef8bf020146f4a0623f8e948",
+      "replacement_sha256": "ac9e255420751ce849d781389d789f31523ad5d0efdbaa2d2eb2b01dbbfdcdf0",
+      "translation": "切换视角",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_18.tga",
+      "effective_sha256": "a94b04aafa6cd25a621c137accb70a5b24520771ea1e76ffc8e372a09940324c",
+      "replacement_sha256": "e76d4d0ef7efc7471ca6836e0b2af3d7a62a7a7529b17953dbecab978f6d39b7",
+      "translation": [
+        "通常"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_19.tga",
+      "effective_sha256": "e1fb13f09ca08a1ec7c269f617437cf345b6d273c818662a3b9b4c2f25edefb2",
+      "replacement_sha256": "f5789e0ed6e577cba6de929ef9cc3e16c7499a62a14dd9e452341b0665bdcc2c",
+      "translation": [
+        "通常"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_20.tga",
+      "effective_sha256": "047a7acfb85833238cd843453bfed7581d860ddba59de61bfc6364c81d329adb",
+      "replacement_sha256": "dd5946e7389c81c4a80ac1eb5d9b9af698bebaa72c82955d4c3dc0bbc2e963a9",
+      "translation": [
+        "通常"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_21.tga",
+      "effective_sha256": "ce766e92563e0ec8b292c450db2d126e6f77811e13329cf63a825995fe2cfd81",
+      "replacement_sha256": "8399b2086a4851a6c9b00bfb118523dd6e170ce5eefdbeb7745b115abfcad14f",
+      "translation": "自动循环",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_22.tga",
+      "effective_sha256": "bee2fd7250b37c8854e8935f210e29f3de63f9f4a27436335983fce6ed461d92",
+      "replacement_sha256": "1063b97f26e78c4d969685af508dbee73de2e29ce0e04a9f67a08cedf7f903ac",
+      "translation": "自动循环",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_23.tga",
+      "effective_sha256": "d929aefd7fec72d7ab930fd7c32910815468e2c0bf166c595ce48c38672f6e2a",
+      "replacement_sha256": "17f69c276b335c5c563821161d79872ca674811934e828b42dd9b0872e499fc1",
+      "translation": "自动循环",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_24.tga",
+      "effective_sha256": "7e00badaa772e3c33c03f0f56bd0191ab4567aeebfc69231e0462499d46ad496",
+      "replacement_sha256": "ddcc33a3388877906051e38ab89e914b625c90511c1bb75fd4ca6f6e93792a10",
+      "translation": [
+        "随机"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_25.tga",
+      "effective_sha256": "2e3543e2ee4604103f6038904d10374bcf06b85fa4dd4c11c224d2c241bd19b7",
+      "replacement_sha256": "47aa8e365ad9fb7440e7f20a75976edbd2011fbede56947898031df4a8dc86a5",
+      "translation": [
+        "无"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_26.tga",
+      "effective_sha256": "573f35cd922a02aa44d5871cd1ebb79edf6ee2542c2ba6f0a88a7284e4748d21",
+      "replacement_sha256": "2c9f60b2dda9eddc6526bf4cc1b4f5431f1d2cc3f30d3e5281eca4d76c56ba40",
+      "translation": [
+        "随机"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_27.tga",
+      "effective_sha256": "59633b728c98d8ac94570e4d06e96a86076b820a61437e61bf1d0e40f8c9560a",
+      "replacement_sha256": "9aa2c546aaf7a0d565842c59b204cd88d3b5b5b8e398133c7418b56e6a8b945f",
+      "translation": [
+        "无",
+        "随机"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_28.tga",
+      "effective_sha256": "de28a4f4ae1b480e78a6bada29fa975c970c95b70e42989d3a57fc69d360e2c2",
+      "replacement_sha256": "6e7c8ed5f1bac3196fc2259fd19fac947db3c6fa7d8d86943b1fd00b46ddb5d4",
+      "translation": "切换位置",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_29.tga",
+      "effective_sha256": "b9b81e17e0cb4fcc804b0322d5b2ef760d6620880ee85a103d5bcef9f4e35a7d",
+      "replacement_sha256": "27b0b97a1e99f3ceb0a5b7aa898da6a0981403f45bd1d44729e596166d7a9af4",
+      "translation": "切换位置",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_30.tga",
+      "effective_sha256": "fbaffc458ac86afe38d4abdd6f657f94de12e0667bab0821cdc65991b470d0db",
+      "replacement_sha256": "f7af8a479ef45688fc4beec88a0733898ebe90556e82338b7d6ffab9b34de5b4",
+      "translation": "自动",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_31.tga",
+      "effective_sha256": "b0d0961210c865820e716cced57beafb4e283d6ef3290bd9761a382f5350509a",
+      "replacement_sha256": "d82be1e79ca4a855604d3f6d63fda0e6116de1c62d193fa4944ed21ffe682b36",
+      "translation": "自动",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_32.tga",
+      "effective_sha256": "8bcdd6289ce7955617c4b3746e3c65a267c70b82bb81827389bc0d91ac361c47",
+      "replacement_sha256": "dd049662384220eb70aaf826119712586031dc665e905940b74d30a7e3616390",
+      "translation": "重置",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_33.tga",
+      "effective_sha256": "d48735503c59bda3bf45281287652e0ee87b6901da264aa6c2cdb8144c405fdf",
+      "replacement_sha256": "f17464f60bc1e3128216b17236b4b0efd48530dda9b55543764c0fc3444397b2",
+      "translation": "重置",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_34.tga",
+      "effective_sha256": "2c7a64ad9dd105d7109af1f0953d62f4a093634c70c757fbab40660c85f6a54a",
+      "replacement_sha256": "098b372183b03402304b3de97395abb449c45b44d00965a346479e4b86e89d73",
+      "translation": "饰品1",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_35.tga",
+      "effective_sha256": "2bf32be8130b87009553862c4967c96cc323a3f931391f91c8d909f87976df10",
+      "replacement_sha256": "9523e7042224412e7e303a14123e8bbd7724afcd4be257ff89a2ff67335e90da",
+      "translation": "饰品1",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_36.tga",
+      "effective_sha256": "01055fb980693e208fc38817cbeb778b1006fba3f63c57cdabcbf51b0f6ac868",
+      "replacement_sha256": "46bee1c63bfbb5c7c877b82cd3da8751e9ad73eda20bef57741094921d837522",
+      "translation": "饰品2",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_37.tga",
+      "effective_sha256": "240142de88fcb1a94244a9c8622f178ecb0b48a982b8cb5bc4e25b5506b96604",
+      "replacement_sha256": "b47a51864518a687a3eccdbf14c969e04a97a0d4518bb38b2bc70fd7a8364398",
+      "translation": "饰品2",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_38.tga",
+      "effective_sha256": "b1b2b5f0b9f9d99cbbce9d4d3f8d7d9bdcf9873ed84f075916fbb1a4db0157db",
+      "replacement_sha256": "1339e124f9b10b26270dc0e03253c8f60b6b9af8ebc4904191eada5174866d2a",
+      "translation": "显示男性",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_39.tga",
+      "effective_sha256": "5067fc8c26048761071bc012829109a6acda5e1d80de5823640b1e1d4c805845",
+      "replacement_sha256": "5a10447575ff6000ee7f1f7ac2ef0844f7909a409f1192b5d4d3aa5d6a5e1a72",
+      "translation": "显示男性",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_40.tga",
+      "effective_sha256": "5af7861fd900c2465caed5eaec7cffbd4d2038a4018edec80643be4250cd5d0f",
+      "replacement_sha256": "d44929cb38d9556b1a411b723f8fafacbe8bcbe74301add0399d23a14eaa0a88",
+      "translation": "显示背景",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_41.tga",
+      "effective_sha256": "49cd2c6af3d1f980d69da69129a3ea021382007178ac140b7924bdeb8b86b031",
+      "replacement_sha256": "8a59c9c52dd56a2938a348491ca8309838f22748a881411fa9a5b8bec6acab5f",
+      "translation": "显示背景",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_44.tga",
+      "effective_sha256": "779194e5e626d82bb1c10be4efcf593c88bce9d29d17e2025cb8c56583003286",
+      "replacement_sha256": "98462708b409d81fb52099cc2139ff43e1cdaf428b2953944f165ef73f29a283",
+      "translation": "返回标题",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_45.tga",
+      "effective_sha256": "d1bde51c9d015fb4197d96c789c070ab2f586c71f87e14bb8dff5f92e3bcbd7c",
+      "replacement_sha256": "5a7d2a242447297c3b50c5a055cf37fc1fc3271b54ca3373b44501d427e09c77",
+      "translation": "返回标题",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_46.tga",
+      "effective_sha256": "bc61fe7e55bf13b14739d89072c00bce5bee73326c1468cfa31507f45c56993e",
+      "replacement_sha256": "c5a81cb6cca14ef1679b8c9299aebe8397d8831152792ef9351842f06592359b",
+      "translation": "退出游戏",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_47.tga",
+      "effective_sha256": "2e592ea6513e66d804c8a018b3fc2ef4c715f4a49fd08719c77329921f9bd7ba",
+      "replacement_sha256": "e708803f2ae96480b7cd19b6f268fdbf955172cd979065c1523b0e72cc0197a9",
+      "translation": "退出游戏",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_51.tga",
+      "effective_sha256": "4a5019f9a9047d442d1a4b062fba04776111ecf59d13663b8fff6505b61cb59d",
+      "replacement_sha256": "ec9ab9922ce1f6edf02f5369f9fcdfeb2013c03d2fe9f94c327ad835d54693cf",
+      "translation": "正常位",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_52.tga",
+      "effective_sha256": "771cfb46047d52c1e0350a3264572a2832b0559de4b8c53e9bdde67062ebd489",
+      "replacement_sha256": "428de569cb40e5c32dd7f0493a3837cb7fadba6f12ce83175f32354a5f8e4255",
+      "translation": "抬起腿",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_53.tga",
+      "effective_sha256": "7aea0d9a4a74798ebed93b91aa6bb93ed1f0b67dfb083863111a4a0d37fe17c4",
+      "replacement_sha256": "5c9758805cb44eb8fe4de09b39d657ec5d1c7acf927fd323e9cc387df819f9ea",
+      "translation": "抱住双腿",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_54.tga",
+      "effective_sha256": "76a12e33c6004f8bf4bcf1342d5592cd16af245296afd9de525bd607de758257",
+      "replacement_sha256": "634d4bb06dcf25f259e30f5bc84f540bdbb8ab315a17ecc47ba9ffa27ea97e48",
+      "translation": "后背位",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_55.tga",
+      "effective_sha256": "0f110f13499e8fdb4d53879aa197ee03847bedd31e710be2ead1fc3c05694ff3",
+      "replacement_sha256": "54d7dfc0b573496f3a0a245c7fba922793fac037395df8c169c8021a6e71e5e3",
+      "translation": "抓住腰部",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_56.tga",
+      "effective_sha256": "150d4f3c8b1eb4f66ab94b1acb737ccaf6d7a39886db706d5b30d3f1be07b865",
+      "replacement_sha256": "f60443b42abdc778805771ab3adfc798491366de23fb31ae935b2a9aa4569c64",
+      "translation": "让她撑住双手",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_57.tga",
+      "effective_sha256": "5b947571e78edcdf9f14d74483ee9ef460d8e979d90cc310e4fa4dc16ae6311d",
+      "replacement_sha256": "3c61c23e9a59415a75d316bf56308486a07246b38e313fe0d70f0e92b99f9378",
+      "translation": "骑乘位",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_58.tga",
+      "effective_sha256": "cadf880689cd7ef54c1d8cacf1d3ac8e317976575f2dacd70f9fafdf27c893c3",
+      "replacement_sha256": "b23e41efcaa7f040998eb61765ad0df749652b8bbbbad327921b6f3946e65920",
+      "translation": "向后仰",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_60.tga",
+      "effective_sha256": "b207570e08096d08f179fb7d5d5c70ecc3a556200b412f8b8c781fec013d81e3",
+      "replacement_sha256": "a0927987ce42e07838c4733de0a3ece8123adf64c7d88441058e367ff354dfb4",
+      "translation": "抓住腿",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_61.tga",
+      "effective_sha256": "4d3ac9028d58d6108915410489b43e6f2281d79a12e54a3a1deb33bf2a3eaeb0",
+      "replacement_sha256": "9597b596816a89b0a27420f2eca6b20b2db74c27027e9c16de971eb725bdcb08",
+      "translation": "抓住头部",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_62.tga",
+      "effective_sha256": "f10d35d873afa70b03dad6bf9285b6ba5ef46c1e0cb5fd6129b784a80ada6c07",
+      "replacement_sha256": "cbae24376efc3dd4a99aeaa3844e4f8a84992b1362cd946d9dae722bf6601307",
+      "translation": "揉捏胸部",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_63.tga",
+      "effective_sha256": "9a027e8fce92c1daee27a7995eb5c5957e441b0f9a21b63f03c1b97d297071fe",
+      "replacement_sha256": "fce8b517a372397d8d1417378df34e6670e616b1c721e5f19ad1b1d5a4134097",
+      "translation": "让她躺在地上",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_64.tga",
+      "effective_sha256": "b129b18ade0212b830fc4afb7a725ce33bad5a330043726dbb1a8317529df850",
+      "replacement_sha256": "1843df313404b6ac35fe4c00a551d26ba82220c486bf46847d44596d27f072a6",
+      "translation": "抓住胸部",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_65.tga",
+      "effective_sha256": "5c04e768f81a30c8cd66fefb1780514efcfc67d5a82edadb63db620068d6ec19",
+      "replacement_sha256": "0d952064f349fc9a372cadf74e0b79c491dfcf597a525d91bc38cad5724cf956",
+      "translation": "分开双腿",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_66.tga",
+      "effective_sha256": "3c3eb829916863bff11c9c6ff6444810690239ad2c6945c9e2057243822b8441",
+      "replacement_sha256": "8c202e77ebc83be858bf40b4edf8f70bf9a5cce04c49bbcc0328c31ba3b5bd07",
+      "translation": "抓住臀部",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_67.tga",
+      "effective_sha256": "41766d460ae6725d81b76c97007604d16d79d7edd041c68ae8e6c9ed9c1807cf",
+      "replacement_sha256": "460464c6cc162a568c5111d4c8ece0ebb2137aa938f2f7a8fbfa52be04469100",
+      "translation": "乳交",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_68.tga",
+      "effective_sha256": "c8a7dc3a3e78e08096d0410f27fb142698c7a5fb45b87c8adad4c90664d1c555",
+      "replacement_sha256": "205ba0f5648d797681dfc799f3757a1e708182386be8acbb7694d126310a7af1",
+      "translation": "按住",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_71.tga",
+      "effective_sha256": "85ebf1c2ea3a4343b9be61afc9a3016c7b5e3e27642eefb1afed0431a8531472",
+      "replacement_sha256": "624a617e2b58617ced72db70d775c49191a5200042c96dffed8140640e69dff0",
+      "translation": "身体后仰",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_74.tga",
+      "effective_sha256": "4bf716ca1cb17253e2acd3e92a3cf3064ad30bd1c0370b17aca3c95fe1fb8007",
+      "replacement_sha256": "f9b163dda7bb048eb752ab0995cee0f3b3237a6e6ff41e86a5756eabe36d683a",
+      "translation": "松开",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_75.tga",
+      "effective_sha256": "80c6c32963fa138e411465702a24fe06ea330840f038e6aa11d995a7c29006b4",
+      "replacement_sha256": "bc24a8b463243ef2c8e061c2793bc4d06ce74ad3feb87b188f6a8706a2f909cc",
+      "translation": "停止",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_76.tga",
+      "effective_sha256": "6f0bd01f1b8f3e972397dab594371c263cf3ca9751763d9bf0050095ccf8a077",
+      "replacement_sha256": "84b3d43aa7e0be1be3a99104410e9512e6967cb550fd8ad7403b236920111737",
+      "translation": "结束",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_77.tga",
+      "effective_sha256": "f625be68e650257a95811522be18033059fd0bd82662cc287200abe61b0a80d0",
+      "replacement_sha256": "34704a3c284ff96db71230e0bc78018d7d2649cc7acfebbc54e7c9db3471c6ed",
+      "translation": "插入",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_78.tga",
+      "effective_sha256": "e73fe65730d95d70d568d3ae86ec265723a9bdd5f8646d50d06038696a7027df",
+      "replacement_sha256": "926e4f4a9db59e1cfb63a4d60b20973f6203a039f8db5e3849e8f352d328d6a0",
+      "translation": "殴打",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_80.tga",
+      "effective_sha256": "e2247de572aa29abfac45a7691ff1908d6c00e4ab1bc057a73c3549cb4a17761",
+      "replacement_sha256": "c7d92efaccd4bb1dfad9a3f2fd36966f65240cc895008438ffbb5376ce9bd6fe",
+      "translation": "褪下内裤",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_81.tga",
+      "effective_sha256": "d9026f95e899b1cf0d7bc572d1eeef078b9d4c3197eacdaefcb6b421213278b7",
+      "replacement_sha256": "037bccb97f3cf2123d7c6eda46875306aa375cbd1a7f65920d979e068733a067",
+      "translation": "跪下",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_82.tga",
+      "effective_sha256": "d647091e72919404387b1a85cf88b1d3e3b0e322dc159ef0d8baadb99371d739",
+      "replacement_sha256": "3e6fc4e96c10ac7672cd5417bd87f3e0475d07d0226b47b29f3fc8df7f4b4105",
+      "translation": "注入",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_83.tga",
+      "effective_sha256": "7adb54835e683c3d06cf462949a386fee0017bdf8b9d7216f7d2e4f7a2d964ad",
+      "replacement_sha256": "25185ae9f72f24bf556b7e5c2e0f3e7606aaddab1dfc76763f6c45c236214be8",
+      "translation": "剪开内裤",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_84.tga",
+      "effective_sha256": "b2c8d7e91b861d9cfe378d9267d16713642d34cf2e530c866d012082771cd1e1",
+      "replacement_sha256": "928f0afa926c6b5a14b9d3c4147809eb108f4e65bdc1e049c7ac026fd9572e28",
+      "translation": "按压",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_85.tga",
+      "effective_sha256": "2dd4beb000d99e02bbb856c0607ffe70115b95d88f797adbf4ba22333caa3cf2",
+      "replacement_sha256": "5b663369dd3de5ecea0a2ef8f1f8dc9c04c2b08f8dea6acd1972199d9bffc5e4",
+      "translation": "脱掉内裤",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_86.tga",
+      "effective_sha256": "c6197546735aabb0f4b176a39537c3bd627efdcd9d545ac215379909773f5690",
+      "replacement_sha256": "dcbe4c0e7773d4318f424682d737bbff6aafec5e343ffe463d62d55b77940341",
+      "translation": "剥开护符",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_87.tga",
+      "effective_sha256": "76997334825dfe80e8e21e5bae20df27e8185a9c3d7bba6ccb5c216459321bc1",
+      "replacement_sha256": "10559982734c71e69886e1af388b9ea27a25c3f20a5038eeea21afbbdb2f90de",
+      "translation": "让她俯卧",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_88.tga",
+      "effective_sha256": "1d311155057fd26567a0ee0be2af60242e5d74367ee2dc0464f68e1cf67f7ca2",
+      "replacement_sha256": "8efb84da35d1733769fdb40efa03cb93267c2bdf37676ab5e7f7d0b5d1a9ca72",
+      "translation": "让她仰卧",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_89.tga",
+      "effective_sha256": "43a4dcb14cfdfa4f3b10cbce29b0f6f6b074ba869587a5433e85c9998c32dbdf",
+      "replacement_sha256": "4efd6b03552cc76def888fc7538cb037d73db3f7520d1b66b3daade443cdd5fa",
+      "translation": "抓住下体",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_90.tga",
+      "effective_sha256": "53432bbea0155feee5794bdb697e0f68192c323a5869f2860f72eec61b01efe9",
+      "replacement_sha256": "bc259122f6c50226ec6294d5699606a0ca88826e051d8ce84373109c47f9719a",
+      "translation": "撕开连裤袜",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_91.tga",
+      "effective_sha256": "d860b50d529b59077095b961812f207e4a9c6a29388eadbd7d07f483a6987340",
+      "replacement_sha256": "89db1b6f7b860c41763346e18cc77bd770a7b7fa14557779ace9c4386de66e06",
+      "translation": "拉下拉链",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_92.tga",
+      "effective_sha256": "f6567103fc628453b4dbcba092d265f116364cd60d2ab59e7dfc1fead8f97407",
+      "replacement_sha256": "9682c3b3c9d5a740addeb8b1e67cb3947826b820711fbdde3045383e3a1b62ca",
+      "translation": "褪下裙子",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_93.tga",
+      "effective_sha256": "d91796d8fdae6c206357c34a2011d027252689549df0b6a32cea08104ac773ef",
+      "replacement_sha256": "5536f88f4f001461aa9bd3032fdb673e2ea0e1b4d60d7b12c7a2c3d0c11b9b15",
+      "translation": "产卵",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_94.tga",
+      "effective_sha256": "d80b817f7bb69178b8dabbab708e5bedb74212f197a86b488fb0033a97111edb",
+      "replacement_sha256": "7f22d88a6a916ce73a27f19fda1088ed54a3a6d655ccebde29c0bda8fc12d651",
+      "translation": "插入管子",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_95.tga",
+      "effective_sha256": "5b9c7f95d4a46595b9ab34783f35333163a5dfbe463bd6b4df558520c19bfcc8",
+      "replacement_sha256": "c3a5c7b40134c605b443eb19227bd3de68a139bab966f4c96b9665033584dde5",
+      "translation": "抬起腰部",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "hs_96.tga",
+      "effective_sha256": "d76b9b854b2de8784d3054c6f8ab85946516ea60b5e311efef709481cf1eac5f",
+      "replacement_sha256": "16e0be8130784a571ec034fa5b17466a712e674dd628c1666cf9e4bb187b0f9d",
+      "translation": "抱住",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "ih_01.tga",
+      "effective_sha256": "9325fa98f1d71112d4154a32ba09a7ec4ca2282280a1496b1bdb2245b1ce3bba",
+      "replacement_sha256": "cfff21367991ea0b203ae8a8c6ab9802bc732a74fec19420387c4809f79574df",
+      "translation": "离开",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "ih_02.tga",
+      "effective_sha256": "e6e2d184acd8c38e95bcc2a04da00f468760c0d3417e35958d9441d8a409113b",
+      "replacement_sha256": "c633aa00a966a84565c77cd311601460698f73858487b22ca7a65e25c6cc67ff",
+      "translation": "离开",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "lo_14.tga",
+      "effective_sha256": "e229482738134c532b08832a9eeb0af4135b7a60267cd71ef0edf36df94e1275",
+      "replacement_sha256": "1029858291345b6d0f94b45ea508dd88d0b04c1a13a83800a46ab93594b19d0d",
+      "translation": "是否读取存档？",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "lo_74.tga",
+      "effective_sha256": "12b3e5385ba09232783dcb4c9498a95c6d24c895b291e39fb489157dd139f479",
+      "replacement_sha256": "e81c7af4131a1c62d9e1f4a42cb8c2470e7f38b21a359dc0a72310d14127d72b",
+      "translation": "区域01",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "lo_75.tga",
+      "effective_sha256": "376a522ef824a90e4832f9663906eb2f7e7588e26ed2165680057d6528d8b78a",
+      "replacement_sha256": "7f5659ea9d4f5d7fb99e8ff1c1b9ee78c3eaf6e145bf65289005c59cf0e5af8c",
+      "translation": "区域02",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "lo_76.tga",
+      "effective_sha256": "1bf75d3bbbb88cad4ee6296644936875fdde7fce7420517e542a818b284f65be",
+      "replacement_sha256": "802e91b268bc657987a233bf8a0a3ecec28608b7ff46adee51b4427857eb9eb5",
+      "translation": "区域03",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "lo_77.tga",
+      "effective_sha256": "53b4ead3ffa18f92b57e8a36dc86456776f3623ac0f05dde61c6d47986ed24ca",
+      "replacement_sha256": "0d18310d131307475ac8d45f44fa28a6747c718698ac12a2707728a891bfb173",
+      "translation": "区域04",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "lo_78.tga",
+      "effective_sha256": "67fb3d39f998afde4f6ed6be230f2397cb48ba49f5326f1a429113b5c3eb29ae",
+      "replacement_sha256": "19d88dc92c20ff157fddb746b2917d83d2a057eebd7a988208ed1c806b9c3d67",
+      "translation": "区域05",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "lo_79.tga",
+      "effective_sha256": "0ca32d0539d24ed99434bfcc774d1a045d9b426cfd021afc0fc7100129d09e03",
+      "replacement_sha256": "6e2b2748c7888dff9e53250fefb1d6f3fa5c796d083e5984f224bd0ece0d2044",
+      "translation": "区域06",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "lo_80.tga",
+      "effective_sha256": "8fb7ce410506bfe0950d07b1379342050911ae7b1d1a5ce83f604fe2c71f5b47",
+      "replacement_sha256": "a6a11136bdd41422753efb3567355497074c5c4d7bb3afb83cb8fd3a1a748781",
+      "translation": "区域07",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "lo_81.tga",
+      "effective_sha256": "4f177dbb42151b8068f533b3192d128cc74ad16753899d91a6c9bf7bd286fdd4",
+      "replacement_sha256": "a3cc44ae7805643e9164f0410f5ca8987b38da91df9ba8fa8cf597458fef29ae",
+      "translation": "区域08",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "lo_82.tga",
+      "effective_sha256": "b6d0d3aa76a2b4bd6960351535aa0da8f64e0b8ba019b896683c54f32d1dfbb9",
+      "replacement_sha256": "78ae8f4cc8596d2f3647fefc6a885e0e8d43856f36d6065f62ea3215008c0d9d",
+      "translation": "区域09",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "ma_08.bmp",
+      "effective_sha256": "3b8dbeda8ac5e71f4d454cc3eac01a1b357fa754556b326d4ab365538a043eca",
+      "replacement_sha256": "6a545166f7bd84dc929bf5955b12b61d23681b1a6c269718777dae5e49e85dbc",
+      "translation": "是否再试一次？",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "ma_09.bmp",
+      "effective_sha256": "2dece3a4f3bfb85a85f6a05ec0f10d84c42073462e153d96d49bceb22b5ac7b5",
+      "replacement_sha256": "a67866dad44553f66703aa7c758f14d6e2478442336d009bbef603f8b8066ff7",
+      "translation": "是否保存？",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "op_00.bmp",
+      "effective_sha256": "4a1ac52911616c79cbede50a0d44e301788bc285a95a8f550acf4ec083da11d2",
+      "replacement_sha256": "4260539799ae881f2cda6c2ebb1b9a1bdbd163e47965633a099e8e79002b7c4e",
+      "translation": "即时追踪动作游戏",
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "sa_14.tga",
+      "effective_sha256": "ff29be5d7a38d3f03e26d132003f3850bdde53dd3e5d95ab46430b4248d2ab52",
+      "replacement_sha256": "840d0ed213304d4fe74bd1c4dc479af608854ab5ec298d9c59493f064f19c554",
+      "translation": "是否保存？",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "sy_11.tga",
+      "effective_sha256": "57680fa5f3fff1eee77ea6fae1d9c0c6746ae0945304afd760c385848ebbdbd1",
+      "replacement_sha256": "13482a4f7cb6e29675f3b246301b6c4d94182bcd1bd8d2d00fa8fa7af8b599c8",
+      "translation": "返回标题画面？",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "sy_12.tga",
+      "effective_sha256": "2db56a28d56e18e2b54e1aa86a21b309e199812fcb9d9cd7e752589af0025878",
+      "replacement_sha256": "0a06ba6fa6f0a5b0cf8891a60f384229e156bfed96305f0eabf22d57a0745310",
+      "translation": "是否退出游戏？",
+      "visual_review": "passed_static",
+      "runtime_verified": false
+    },
+    {
+      "archive": "bk3_00",
+      "name": "te_01.bmp",
+      "effective_sha256": "cde3e41b7c3f82e3116d0e278d7758721fb7af4df9eb8a78c14fd707cc715930",
+      "replacement_sha256": "b6c52d38f77d87d4f1284eb234f1c982f265e9769150eae4e03fe26d61dd070a",
+      "translation": [
+        "按住鼠标左键向前奔跑。\n双击后按住则向前行走。",
+        "按住鼠标右键后退。\n双击鼠标右键蹲下。",
+        "左右移动鼠标，\n可以改变身体朝向。",
+        "在 Action 标记附近按下，\n可以躲藏或执行其他动作。"
+      ],
+      "visual_review": "passed_user",
+      "runtime_verified": false
+    }
+  ],
+  "remaining_audits": [
+    "Remaining UI textures",
+    "World textures",
+    "Executable text",
+    "Scenario source comparison",
+    "Movie subtitles",
+    "Runtime rendering and upgrade installation"
+  ]
+}

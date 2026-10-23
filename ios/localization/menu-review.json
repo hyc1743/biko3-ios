@@ -1,0 +1,805 @@
+{
+  "schema": 1,
+  "date": "2026-10-23",
+  "reviewed": [
+    {
+      "name": "sy_11.tga",
+      "sha256": "13482a4f7cb6e29675f3b246301b6c4d94182bcd1bd8d2d00fa8fa7af8b599c8",
+      "status": "passed_static",
+      "changed_this_review": false
+    },
+    {
+      "name": "sy_12.tga",
+      "sha256": "0a06ba6fa6f0a5b0cf8891a60f384229e156bfed96305f0eabf22d57a0745310",
+      "status": "passed_static",
+      "changed_this_review": false
+    },
+    {
+      "name": "sa_14.tga",
+      "sha256": "840d0ed213304d4fe74bd1c4dc479af608854ab5ec298d9c59493f064f19c554",
+      "status": "passed_static",
+      "changed_this_review": false
+    },
+    {
+      "name": "lo_14.tga",
+      "sha256": "1029858291345b6d0f94b45ea508dd88d0b04c1a13a83800a46ab93594b19d0d",
+      "status": "passed_static",
+      "changed_this_review": false
+    },
+    {
+      "name": "ma_08.bmp",
+      "sha256": "6a545166f7bd84dc929bf5955b12b61d23681b1a6c269718777dae5e49e85dbc",
+      "status": "passed_static",
+      "changed_this_review": false
+    },
+    {
+      "name": "ma_09.bmp",
+      "sha256": "a67866dad44553f66703aa7c758f14d6e2478442336d009bbef603f8b8066ff7",
+      "status": "passed_static",
+      "changed_this_review": false
+    },
+    {
+      "name": "lo_74.tga",
+      "sha256": "e81c7af4131a1c62d9e1f4a42cb8c2470e7f38b21a359dc0a72310d14127d72b",
+      "status": "passed_static",
+      "changed_this_review": true
+    },
+    {
+      "name": "lo_75.tga",
+      "sha256": "7f5659ea9d4f5d7fb99e8ff1c1b9ee78c3eaf6e145bf65289005c59cf0e5af8c",
+      "status": "passed_static",
+      "changed_this_review": true
+    },
+    {
+      "name": "lo_76.tga",
+      "sha256": "802e91b268bc657987a233bf8a0a3ecec28608b7ff46adee51b4427857eb9eb5",
+      "status": "passed_static",
+      "changed_this_review": true
+    },
+    {
+      "name": "lo_77.tga",
+      "sha256": "0d18310d131307475ac8d45f44fa28a6747c718698ac12a2707728a891bfb173",
+      "status": "passed_static",
+      "changed_this_review": true
+    },
+    {
+      "name": "lo_78.tga",
+      "sha256": "19d88dc92c20ff157fddb746b2917d83d2a057eebd7a988208ed1c806b9c3d67",
+      "status": "passed_static",
+      "changed_this_review": true
+    },
+    {
+      "name": "lo_79.tga",
+      "sha256": "6e2b2748c7888dff9e53250fefb1d6f3fa5c796d083e5984f224bd0ece0d2044",
+      "status": "passed_static",
+      "changed_this_review": true
+    },
+    {
+      "name": "lo_80.tga",
+      "sha256": "a6a11136bdd41422753efb3567355497074c5c4d7bb3afb83cb8fd3a1a748781",
+      "status": "passed_static",
+      "changed_this_review": true
+    },
+    {
+      "name": "lo_81.tga",
+      "sha256": "a3cc44ae7805643e9164f0410f5ca8987b38da91df9ba8fa8cf597458fef29ae",
+      "status": "passed_static",
+      "changed_this_review": true
+    },
+    {
+      "name": "lo_82.tga",
+      "sha256": "78ae8f4cc8596d2f3647fefc6a885e0e8d43856f36d6065f62ea3215008c0d9d",
+      "status": "passed_static",
+      "changed_this_review": true
+    },
+    {
+      "name": "al_11.tga",
+      "sha256": "bf31329f9b0df83476460da789816d6e0f54c9fbf71774e7a1bcd971354e834a",
+      "status": "passed_static",
+      "changed_this_review": false
+    },
+    {
+      "name": "al_12.tga",
+      "sha256": "070bf9993f749e395dc7651e0813ca1403154f0ffdbd1875c1fc29fdb84c027d",
+      "status": "passed_static",
+      "changed_this_review": false
+    },
+    {
+      "name": "al_13.tga",
+      "sha256": "31b1ed209f2bbb5428d148ffbef3d5b585a3bfe6c78625c1c7f39970d67bdfbe",
+      "status": "passed_static",
+      "changed_this_review": false
+    },
+    {
+      "name": "al_14.tga",
+      "sha256": "a5287bfdc0f0393aee64878f3723d9e5917f1878e2a7eb3b9a7969d6c558a2b7",
+      "status": "passed_static",
+      "changed_this_review": false
+    },
+    {
+      "name": "al_31.tga",
+      "sha256": "7264a87e7c290da06a9a56b7fd201b6917af98e62c9710f6387126f8aaa1dfb0",
+      "status": "passed_static",
+      "changed_this_review": true
+    },
+    {
+      "name": "ex_00.bmp",
+      "sha256": "ff922b60d71c2bfbcb11d1ecf535fa19c25d92e58f985badf8acc2c94fccaa22",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "ex_23.tga",
+      "sha256": "9adb7a3e78727639c5713a1f20ee9c0a195febecd8d07c530eae34af47bb6d19",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "ex_24.tga",
+      "sha256": "17954b66db8ae2e89326d69f17ca9b83832ed9d8f5119327248f7c2c238cac76",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "ex_25.tga",
+      "sha256": "526431b0437280023c625902695d1a50cad7a52fabf992ea508490ef87ab647d",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "ex_26.tga",
+      "sha256": "407730cfc0f224cc482329368b4c2afb8f002b65717be575e6a86d360f9ed857",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "ex_27.tga",
+      "sha256": "cb761ae82d42644ce2e74f1f537459150ad559fc208465ea273f01b5423a4123",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "ex_28.tga",
+      "sha256": "a6cd36c5b9fcdb21d5dc25b3b038f7751fae697c9dc3e8a521fa3a57b4c1b37f",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "ex_29.tga",
+      "sha256": "6fa72316c0b44410bbbdcd8dfbcc6627f60f9769ad4b973015fda60ec87ae84c",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_09.tga",
+      "sha256": "f775fae77bf7571a47f91362d739aa88fb0b86ebac6c7c767f9e8107a01625cd",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_105.tga",
+      "sha256": "5daa7eca7b1caa6fcaeb96d0139a11f2eef9e5b8fa18c6c41f4efc6d7db6e041",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_11.tga",
+      "sha256": "77c69d46f142207b42c89b5adb3d44ecb19de84dbb62134b36ffb5440104eae8",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_12.tga",
+      "sha256": "ac9e255420751ce849d781389d789f31523ad5d0efdbaa2d2eb2b01dbbfdcdf0",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_18.tga",
+      "sha256": "e76d4d0ef7efc7471ca6836e0b2af3d7a62a7a7529b17953dbecab978f6d39b7",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_19.tga",
+      "sha256": "f5789e0ed6e577cba6de929ef9cc3e16c7499a62a14dd9e452341b0665bdcc2c",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_20.tga",
+      "sha256": "dd5946e7389c81c4a80ac1eb5d9b9af698bebaa72c82955d4c3dc0bbc2e963a9",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_21.tga",
+      "sha256": "8399b2086a4851a6c9b00bfb118523dd6e170ce5eefdbeb7745b115abfcad14f",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_22.tga",
+      "sha256": "1063b97f26e78c4d969685af508dbee73de2e29ce0e04a9f67a08cedf7f903ac",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_23.tga",
+      "sha256": "17f69c276b335c5c563821161d79872ca674811934e828b42dd9b0872e499fc1",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_24.tga",
+      "sha256": "ddcc33a3388877906051e38ab89e914b625c90511c1bb75fd4ca6f6e93792a10",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_25.tga",
+      "sha256": "47aa8e365ad9fb7440e7f20a75976edbd2011fbede56947898031df4a8dc86a5",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_26.tga",
+      "sha256": "2c9f60b2dda9eddc6526bf4cc1b4f5431f1d2cc3f30d3e5281eca4d76c56ba40",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_27.tga",
+      "sha256": "9aa2c546aaf7a0d565842c59b204cd88d3b5b5b8e398133c7418b56e6a8b945f",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_28.tga",
+      "sha256": "6e7c8ed5f1bac3196fc2259fd19fac947db3c6fa7d8d86943b1fd00b46ddb5d4",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_29.tga",
+      "sha256": "27b0b97a1e99f3ceb0a5b7aa898da6a0981403f45bd1d44729e596166d7a9af4",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_30.tga",
+      "sha256": "f7af8a479ef45688fc4beec88a0733898ebe90556e82338b7d6ffab9b34de5b4",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_31.tga",
+      "sha256": "d82be1e79ca4a855604d3f6d63fda0e6116de1c62d193fa4944ed21ffe682b36",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_32.tga",
+      "sha256": "dd049662384220eb70aaf826119712586031dc665e905940b74d30a7e3616390",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_33.tga",
+      "sha256": "f17464f60bc1e3128216b17236b4b0efd48530dda9b55543764c0fc3444397b2",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_34.tga",
+      "sha256": "098b372183b03402304b3de97395abb449c45b44d00965a346479e4b86e89d73",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_35.tga",
+      "sha256": "9523e7042224412e7e303a14123e8bbd7724afcd4be257ff89a2ff67335e90da",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_36.tga",
+      "sha256": "46bee1c63bfbb5c7c877b82cd3da8751e9ad73eda20bef57741094921d837522",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_37.tga",
+      "sha256": "b47a51864518a687a3eccdbf14c969e04a97a0d4518bb38b2bc70fd7a8364398",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_38.tga",
+      "sha256": "1339e124f9b10b26270dc0e03253c8f60b6b9af8ebc4904191eada5174866d2a",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_39.tga",
+      "sha256": "5a10447575ff6000ee7f1f7ac2ef0844f7909a409f1192b5d4d3aa5d6a5e1a72",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_40.tga",
+      "sha256": "d44929cb38d9556b1a411b723f8fafacbe8bcbe74301add0399d23a14eaa0a88",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_41.tga",
+      "sha256": "8a59c9c52dd56a2938a348491ca8309838f22748a881411fa9a5b8bec6acab5f",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_44.tga",
+      "sha256": "98462708b409d81fb52099cc2139ff43e1cdaf428b2953944f165ef73f29a283",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_45.tga",
+      "sha256": "5a7d2a242447297c3b50c5a055cf37fc1fc3271b54ca3373b44501d427e09c77",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_46.tga",
+      "sha256": "c5a81cb6cca14ef1679b8c9299aebe8397d8831152792ef9351842f06592359b",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_47.tga",
+      "sha256": "e708803f2ae96480b7cd19b6f268fdbf955172cd979065c1523b0e72cc0197a9",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_51.tga",
+      "sha256": "ec9ab9922ce1f6edf02f5369f9fcdfeb2013c03d2fe9f94c327ad835d54693cf",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_52.tga",
+      "sha256": "428de569cb40e5c32dd7f0493a3837cb7fadba6f12ce83175f32354a5f8e4255",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_53.tga",
+      "sha256": "5c9758805cb44eb8fe4de09b39d657ec5d1c7acf927fd323e9cc387df819f9ea",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_54.tga",
+      "sha256": "634d4bb06dcf25f259e30f5bc84f540bdbb8ab315a17ecc47ba9ffa27ea97e48",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_55.tga",
+      "sha256": "54d7dfc0b573496f3a0a245c7fba922793fac037395df8c169c8021a6e71e5e3",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_56.tga",
+      "sha256": "f60443b42abdc778805771ab3adfc798491366de23fb31ae935b2a9aa4569c64",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_57.tga",
+      "sha256": "3c61c23e9a59415a75d316bf56308486a07246b38e313fe0d70f0e92b99f9378",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_58.tga",
+      "sha256": "b23e41efcaa7f040998eb61765ad0df749652b8bbbbad327921b6f3946e65920",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_60.tga",
+      "sha256": "a0927987ce42e07838c4733de0a3ece8123adf64c7d88441058e367ff354dfb4",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_61.tga",
+      "sha256": "9597b596816a89b0a27420f2eca6b20b2db74c27027e9c16de971eb725bdcb08",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_62.tga",
+      "sha256": "cbae24376efc3dd4a99aeaa3844e4f8a84992b1362cd946d9dae722bf6601307",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_63.tga",
+      "sha256": "fce8b517a372397d8d1417378df34e6670e616b1c721e5f19ad1b1d5a4134097",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_64.tga",
+      "sha256": "1843df313404b6ac35fe4c00a551d26ba82220c486bf46847d44596d27f072a6",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_65.tga",
+      "sha256": "0d952064f349fc9a372cadf74e0b79c491dfcf597a525d91bc38cad5724cf956",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_66.tga",
+      "sha256": "8c202e77ebc83be858bf40b4edf8f70bf9a5cce04c49bbcc0328c31ba3b5bd07",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_67.tga",
+      "sha256": "460464c6cc162a568c5111d4c8ece0ebb2137aa938f2f7a8fbfa52be04469100",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_68.tga",
+      "sha256": "205ba0f5648d797681dfc799f3757a1e708182386be8acbb7694d126310a7af1",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_71.tga",
+      "sha256": "624a617e2b58617ced72db70d775c49191a5200042c96dffed8140640e69dff0",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_74.tga",
+      "sha256": "f9b163dda7bb048eb752ab0995cee0f3b3237a6e6ff41e86a5756eabe36d683a",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_75.tga",
+      "sha256": "bc24a8b463243ef2c8e061c2793bc4d06ce74ad3feb87b188f6a8706a2f909cc",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_76.tga",
+      "sha256": "84b3d43aa7e0be1be3a99104410e9512e6967cb550fd8ad7403b236920111737",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_77.tga",
+      "sha256": "34704a3c284ff96db71230e0bc78018d7d2649cc7acfebbc54e7c9db3471c6ed",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_78.tga",
+      "sha256": "926e4f4a9db59e1cfb63a4d60b20973f6203a039f8db5e3849e8f352d328d6a0",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_80.tga",
+      "sha256": "c7d92efaccd4bb1dfad9a3f2fd36966f65240cc895008438ffbb5376ce9bd6fe",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_81.tga",
+      "sha256": "037bccb97f3cf2123d7c6eda46875306aa375cbd1a7f65920d979e068733a067",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_82.tga",
+      "sha256": "3e6fc4e96c10ac7672cd5417bd87f3e0475d07d0226b47b29f3fc8df7f4b4105",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_83.tga",
+      "sha256": "25185ae9f72f24bf556b7e5c2e0f3e7606aaddab1dfc76763f6c45c236214be8",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_84.tga",
+      "sha256": "928f0afa926c6b5a14b9d3c4147809eb108f4e65bdc1e049c7ac026fd9572e28",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_85.tga",
+      "sha256": "5b663369dd3de5ecea0a2ef8f1f8dc9c04c2b08f8dea6acd1972199d9bffc5e4",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_86.tga",
+      "sha256": "dcbe4c0e7773d4318f424682d737bbff6aafec5e343ffe463d62d55b77940341",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_87.tga",
+      "sha256": "10559982734c71e69886e1af388b9ea27a25c3f20a5038eeea21afbbdb2f90de",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_88.tga",
+      "sha256": "8efb84da35d1733769fdb40efa03cb93267c2bdf37676ab5e7f7d0b5d1a9ca72",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_89.tga",
+      "sha256": "4efd6b03552cc76def888fc7538cb037d73db3f7520d1b66b3daade443cdd5fa",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_90.tga",
+      "sha256": "bc259122f6c50226ec6294d5699606a0ca88826e051d8ce84373109c47f9719a",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_91.tga",
+      "sha256": "89db1b6f7b860c41763346e18cc77bd770a7b7fa14557779ace9c4386de66e06",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_92.tga",
+      "sha256": "9682c3b3c9d5a740addeb8b1e67cb3947826b820711fbdde3045383e3a1b62ca",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_93.tga",
+      "sha256": "5536f88f4f001461aa9bd3032fdb673e2ea0e1b4d60d7b12c7a2c3d0c11b9b15",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_94.tga",
+      "sha256": "7f22d88a6a916ce73a27f19fda1088ed54a3a6d655ccebde29c0bda8fc12d651",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_95.tga",
+      "sha256": "c3a5c7b40134c605b443eb19227bd3de68a139bab966f4c96b9665033584dde5",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "hs_96.tga",
+      "sha256": "16e0be8130784a571ec034fa5b17466a712e674dd628c1666cf9e4bb187b0f9d",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "ih_01.tga",
+      "sha256": "cfff21367991ea0b203ae8a8c6ab9802bc732a74fec19420387c4809f79574df",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "ih_02.tga",
+      "sha256": "c633aa00a966a84565c77cd311601460698f73858487b22ca7a65e25c6cc67ff",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "op_00.bmp",
+      "sha256": "4260539799ae881f2cda6c2ebb1b9a1bdbd163e47965633a099e8e79002b7c4e",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    },
+    {
+      "name": "te_01.bmp",
+      "sha256": "b6c52d38f77d87d4f1284eb234f1c982f265e9769150eae4e03fe26d61dd070a",
+      "status": "passed_user",
+      "reviewer": "user",
+      "evidence": "User confirmed all 84 exported pending textures passed visual review",
+      "changed_this_review": false
+    }
+  ],
+  "remaining": 0,
+  "fixed": 10,
+  "runtime_verified": false,
+  "merged_patch_sha256": "e2d115335d47dc33f1b76dc480a615e5dc234fbad07cecda505be63cddf70032",
+  "user_reviewed_count": 84,
+  "static_reviewed_count": 20,
+  "visual_review_complete": true
+}

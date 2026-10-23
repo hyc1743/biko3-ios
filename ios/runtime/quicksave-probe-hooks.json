@@ -1,0 +1,12 @@
+{
+  "source_nro_sha256": "31320a8ce44f8e1826fc90ed5b26cb714c551413b286f8c69adb03f9e8b07178",
+  "hooks": [
+    {
+      "offset": "0x9bc60",
+      "slot": 1041,
+      "symbol": "biko3_game_probe_tick",
+      "expected_original": "fd7bb5a9fd030091e70302aaf35301a9",
+      "chain_original": true
+    }
+  ]
+}

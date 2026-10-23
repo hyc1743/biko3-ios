@@ -1,0 +1,117 @@
+# 尾行 3 · Biko3 iOS
+
+在 iPhone 上游玩《尾行 3》，支持横屏、屏幕虚拟手柄和实体手柄。
+
+当前正式版为 **[v0.1.1](https://github.com/hyc1743/biko3-ios/releases/tag/v0.1.1)**，已启用资源中现成的中文补丁。已有 dev.3 资源的玩家只需覆盖安装新版 IPA，无需重新下载或复制资源。
+
+## 准备
+
+- 安装 iOS 26 或更新版本的 iPhone。
+- 从 [v0.1.1 正式版](https://github.com/hyc1743/biko3-ios/releases/tag/v0.1.1) 的 Assets 下载 `Biko3-development.ipa`，使用自己的签名与侧载工具安装。文件名仍保留 `development`，该 Release 为正式发布。IPA 未签名，项目不提供签名证书。
+- 从 [dev.3 下载页](https://github.com/hyc1743/biko3-ios/releases/tag/v0.1.0-dev.3) 下载下面列出的六个游戏资源分卷。资源单独提供，IPA 本身不包含 Data。
+- 手机需要容纳约 3 GB 的分卷和约 3 GB 的展开数据，首次导入时请预留足够空间。
+
+## 安装游戏资源
+
+首次安装下载六个资源分卷即可，无需下载源码、安装 Python 或自行打包。已导入过资源的玩家更新 IPA 后可以继续使用原有数据，无需重复下载。
+
+2026-10-23 已核对 Switch 上游：现用 1.0.79 程序与原补丁均匹配上游公布的 SHA-256，六个资源分卷及全部 169 个源文件校验通过。近期上游主要新增 Linux / Steam 支持，未发现新增剧情或关卡资源，本次无需更换分卷。核对范围见[上游更新记录](docs/upstream-status.md)。
+
+### 1. 下载全部六个分卷
+
+在 [dev.3 的 Assets 列表](https://github.com/hyc1743/biko3-ios/releases/tag/v0.1.0-dev.3) 中下载以下文件，也可以点击表内链接：
+
+| 文件 | 大小 |
+| --- | ---: |
+| [Biko3Data.part001.b3data](https://github.com/hyc1743/biko3-ios/releases/download/v0.1.0-dev.3/Biko3Data.part001.b3data) | 512 MiB |
+| [Biko3Data.part002.b3data](https://github.com/hyc1743/biko3-ios/releases/download/v0.1.0-dev.3/Biko3Data.part002.b3data) | 512 MiB |
+| [Biko3Data.part003.b3data](https://github.com/hyc1743/biko3-ios/releases/download/v0.1.0-dev.3/Biko3Data.part003.b3data) | 512 MiB |
+| [Biko3Data.part004.b3data](https://github.com/hyc1743/biko3-ios/releases/download/v0.1.0-dev.3/Biko3Data.part004.b3data) | 512 MiB |
+| [Biko3Data.part005.b3data](https://github.com/hyc1743/biko3-ios/releases/download/v0.1.0-dev.3/Biko3Data.part005.b3data) | 512 MiB |
+| [Biko3Data.part006.b3data](https://github.com/hyc1743/biko3-ios/releases/download/v0.1.0-dev.3/Biko3Data.part006.b3data) | 约 284 MiB |
+
+六卷合计约 2.98 GB，**必须全部下载，保持原文件名**。应用内置匹配的校验清单，复制完成后会自动检查完整性。不要把 GitHub 自动生成的 `Source code` 压缩包当作游戏资源。
+
+### 2. 复制到 iPhone
+
+首次打开 Biko3，让应用创建文件目录。然后通过“文件”App，或电脑上的 Apple Devices / iTunes 文件共享，将 **六个 `.b3data` 文件**复制到：
+
+```text
+文件 → 我的 iPhone → Biko3
+```
+
+直接放在 Biko3 根目录即可，也可以放到其中的 `ResourcePacks` 文件夹。保持原文件名，无需复制 JSON 清单，也不要手动解压分卷。
+
+### 3. 自动导入
+
+返回 Biko3，应用会自动校验并展开资源，界面显示当前进度。请保持应用在前台。
+
+- 提示缺卷或校验失败：补齐或重新复制提示中的文件，再点“重新检查 / 继续解包”。
+- 中断后重开：已完成且校验正确的文件会保留，未完成文件重新展开。
+- 导入完成：自动进入游戏。确认可以游玩后，可删除手机里的六个分卷，释放约 3 GB 空间；保留 `game/Data`。
+
+也可直接复制自己已有的完整 Data，目录结构必须是 `Biko3/game/Data`，避免多嵌套一层 `Data/Data`。自行打包和 SHA-256 校验方法见[资源分卷指南](docs/resource-packs.md)。
+
+## 中文补丁
+
+v0.1.1 自动读取现有资源中的 `game/Data/patch.pp`，无需单独下载汉化补丁或移动文件。使用自己已有的 Data 时，请确认其中包含原补丁；缺少补丁时仍显示原文。
+
+本项目原样套用已有汉化，保留原汉化组署名，不额外翻译或修改贴图。补丁包含简体中文剧情，部分菜单使用繁体字，未覆盖的日文和英文保持原样。已在 macOS 运行中确认补丁加载及菜单中文显示；本版 iPhone 显示和完整剧情仍需实际游玩验证。
+
+## 操作
+
+虚拟手柄与实体手柄按相同的位置映射：
+
+```text
+       Y
+   X       B
+       A
+```
+
+| 位置 | 游戏按键 |
+| --- | --- |
+| 上 | Y |
+| 下 | A |
+| 左 | X |
+| 右 | B |
+
+实体手柄按四个面键的物理位置映射；不同品牌的印刷字样可能不同。肩键、扳机、方向键和摇杆保持各自功能。
+
+连接系统可识别的实体手柄后，虚拟手柄自动隐藏，断开后恢复。虚拟手柄顶部的 `2D / 3D` 按钮用于切换布局；需要方向键和右摇杆时切换至 `3D`。右摇杆通过右侧空白区域滑动操作。
+
+## 存档、更新和日志
+
+以下路径均以“文件 → 我的 iPhone → Biko3”为根目录：
+
+| 路径 | 内容 |
+| --- | --- |
+| `game/Data` | 展开后的游戏资源，游玩时需保留 |
+| `ResourcePacks` | 可选的资源分卷存放目录 |
+| `saves` | 存档，建议定期备份 |
+| `log.txt` | 本次启动与运行日志 |
+| `log.prev.txt` | 上一次运行日志 |
+
+更新到 v0.1.1：
+
+1. 先导出备份 `saves` 文件夹。
+2. 下载新版 IPA，使用与旧版相同的签名账号和应用标识覆盖安装；不要先卸载旧版。
+3. 打开游戏，继续使用已有的 `game/Data` 和存档。已导入 dev.3 资源的玩家无需重传六个分卷。
+
+若侧载工具提示签名或应用标识不匹配，请先保留备份，再检查签名设置。快存与快读功能未包含在 v0.1.1 中。
+
+遇到闪退、黑屏、无声或操作异常，可在 [Issues](https://github.com/hyc1743/biko3-ios/issues) 提供 iPhone 型号、iOS 版本、应用版本、复现步骤，以及 `log.txt` 和 `log.prev.txt`。画面问题可附截图或录屏。只保留上一轮日志，出问题后请尽快导出，避免连续重启覆盖。日志保存在本机，不会自动上传。
+
+## 参考项目与致谢
+
+感谢以下项目及其贡献者：
+
+- [ruje0504-2/biko3-switch-runtime](https://github.com/ruje0504-2/biko3-switch-runtime)：原 Switch 原生移植上游，本项目所用游戏运行程序、资源加载与 Switch 功能实现的来源；感谢作者及贡献者的移植与维护工作。
+- 原中文补丁作者及汉化组：本版直接使用资源中已有的剧本、字体与图片补丁，保留补丁中的原始署名。
+
+- [seedds/nxnative](https://github.com/seedds/nxnative)：本项目使用的原生宿主、指令改写工具、平台服务及触控／手柄前端的基础。
+- [jhaizhou-ops/d2r-mobile](https://github.com/jhaizhou-ops/d2r-mobile)：参考其将原有游戏适配到 iOS 的实现与使用体验设计。
+- [LNPANDY/nxnative-romfs-archive](https://github.com/LNPANDY/nxnative-romfs-archive)：参考其解决大量资源文件传输与安装问题的分卷思路。本项目使用自己的 `.b3data` 格式并在首次启动时展开资源。
+- [KhronosGroup/MoltenVK](https://github.com/KhronosGroup/MoltenVK)：将 Vulkan 图形与计算调用接到 Metal。
+- [switchbrew/libnx](https://github.com/switchbrew/libnx) 及相关工具链贡献者：平台接口资料与运行时兼容参考。
+
+各项目保留其原有许可证，详见 [THIRD_PARTY.md](THIRD_PARTY.md)。本仓库原创适配代码与工具使用 [MIT 许可证](LICENSE)；游戏程序、图像及其他资源的权利归原权利人所有。
