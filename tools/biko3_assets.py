@@ -9,6 +9,28 @@ import json
 KEY = b"\x2f\xca\xd8\x35"
 MAGIC_XOR = 0xA67F54CB
 
+def preview_texture(source: Path, destination: Path) -> dict:
+    """Convert unsupported texture previews to PNG without editing the source."""
+    import hashlib
+    from PIL import Image
+    if destination.suffix.lower() != ".png" or destination.exists():
+        raise ValueError("preview requires a fresh PNG destination")
+    if source.resolve() == destination.resolve():
+        raise ValueError("preview must not overwrite the source")
+    source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
+    with Image.open(source) as texture:
+        texture.load()
+        pixels = texture.convert("RGBA")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    pixels.save(destination, format="PNG")
+    with Image.open(destination) as check:
+        if check.size != pixels.size or check.convert("RGBA").tobytes() != pixels.tobytes():
+            raise ValueError("texture preview pixel mismatch")
+    if hashlib.sha256(source.read_bytes()).hexdigest() != source_hash:
+        raise ValueError("source changed during preview")
+    return {"source_sha256": source_hash, "width": pixels.width, "height": pixels.height,
+            "preview": str(destination), "source_unchanged": True}
+
 def decode_tbl(blob: bytes) -> bytes:
     if len(blob) < 5:
         raise ValueError("tbl stream is too short")
@@ -429,8 +451,11 @@ if __name__ == "__main__":
     p.add_argument("--export-scenarios", action="store_true")
     p.add_argument("--effective-ui", action="store_true")
     p.add_argument("--audit-patch", action="store_true")
+    p.add_argument("--preview-texture", action="store_true", help="Read one texture and write a lossless PNG preview; requires Pillow")
     args=p.parse_args()
-    if args.audit_patch:
+    if args.preview_texture:
+        print(json.dumps(preview_texture(args.data, args.out)))
+    elif args.audit_patch:
         result = audit_existing_patch(args.data, args.out)
         print(json.dumps({"validated_patch_records": len(result["records"]), "runtime_verified": False}))
     elif args.effective_ui:

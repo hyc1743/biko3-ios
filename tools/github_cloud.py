@@ -28,6 +28,8 @@ ROOT = Path(__file__).resolve().parents[1]
 APP_ICON_PATH = "ios/Assets.xcassets/AppIcon.appiconset/AppIcon.png"
 # Exact user-supplied artwork resized to an opaque 1024px app icon.
 APP_ICON_SHA256 = "fc52f433c0ab7b0d537f3bae46a9b4c2887212e0246b71ad913e39440c084c47"
+LOCALIZATION_PATCH_PATH = "ios/localization/patch.pp"
+LOCALIZATION_PATCH_SHA256 = "c01589312262a1faa4bce91698d2721538f21a1e830a98c42e4cd5aafedd4b8e"
 
 
 def git_executable():
@@ -284,6 +286,9 @@ def publication_files(root, manifest):
         elif entry == APP_ICON_PATH:
             if hashlib.sha256(data).hexdigest() != APP_ICON_SHA256:
                 raise ValueError("App icon differs from the reviewed user-supplied artwork")
+        elif entry == LOCALIZATION_PATCH_PATH:
+            if hashlib.sha256(data).hexdigest() != LOCALIZATION_PATCH_SHA256:
+                raise ValueError("Localization patch differs from the reviewed candidate")
         elif (len(data) > 5 * 1024 * 1024 or b"\0" in data or
               re.search(rb"(?m)^-----BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-----\r?$", data)):
             raise ValueError("Publication entry is binary, oversized or contains a private key: " + entry)

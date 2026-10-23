@@ -2,6 +2,8 @@
   "schema": 1,
   "scope": "Translate remaining Japanese only; preserve other languages and existing Chinese",
   "runtime_verified": false,
+  "preserve_japanese_character_names": true,
+  "preserved_name_resources": ["al_05.tga", "al_06.tga", "al_07.tga", "al_08.tga", "pr_13.tga", "pr_15.tga", "pr_18.tga", "pr_20.tga"],
   "entries": [
     {"archive":"bk3_00","names":["al_11.tga","al_12.tga"],"source":"スライドショー","translation":"幻灯片播放","status":"translation_reviewed_texture_pending"},
     {"archive":"bk3_00","names":["lo_14.tga"],"source":"ロードしますか？","translation":"是否读取存档？","status":"translation_reviewed_texture_pending"},

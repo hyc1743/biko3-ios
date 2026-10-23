@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "file": "patch.pp",
+  "bytes": 41285289,
+  "sha256": "c01589312262a1faa4bce91698d2721538f21a1e830a98c42e4cd5aafedd4b8e",
+  "base_patch_sha256": "5aa69af72f240d6cf2fa1d12293564256bef120b1c1a70cb210e597927df9f42",
+  "reviewed": true,
+  "review_scope": "Generated textures inspected; engine runtime still unverified",
+  "replacement_count": 103,
+  "preserve_japanese_character_names": true,
+  "complete_localization": false,
+  "runtime_verified": false
+}

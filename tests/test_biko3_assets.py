@@ -9,10 +9,29 @@ import hashlib
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 from biko3_assets import (decode_tbl, index_entries, legacy_entries, replace_entry,
                          apply_resource_patch, encode_resource_patch, write_legacy_archive,
-                         supplement_patch, build_inventory, audit_existing_patch)
+                         supplement_patch, build_inventory, audit_existing_patch, preview_texture)
 
 
 class Biko3AssetTests(unittest.TestCase):
+    def test_tga_preview_preserves_alpha_pixels_and_source(self):
+        try:
+            from PIL import Image
+        except ImportError:
+            self.skipTest("optional Pillow is needed for texture previews")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source, preview = root / "texture.tga", root / "preview.png"
+            image = Image.new("RGBA", (3, 2), (40, 80, 120, 0))
+            image.putpixel((1, 1), (10, 20, 30, 170))
+            image.save(source)
+            original = source.read_bytes()
+            result = preview_texture(source, preview)
+            self.assertTrue(result["source_unchanged"])
+            self.assertEqual(source.read_bytes(), original)
+            with Image.open(preview) as check:
+                self.assertEqual(check.convert("RGBA").tobytes(), image.tobytes())
+            with self.assertRaises(ValueError):
+                preview_texture(source, preview)
     def test_supplement_preserves_existing_chinese_and_requires_source_hash(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
